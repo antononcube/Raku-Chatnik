@@ -120,6 +120,55 @@ flowchart LR
     style LLMInteract fill:DimGray,stroke:#333,stroke-width:2px
 ```
 
+
+Here is the corresponding sequence diagram:
+
+```mermaid
+sequenceDiagram
+    participant CCommand as Chat command
+    participant IngestCODB as Chat objects file ingestion
+    participant CODBOS as Chat objects file
+    participant CODB as Chat objects
+    participant CIDQ as Chat ID specified?
+    participant CIDEQ as Chat ID exists in DB?
+    participant RECO as Retrieve existing chat object
+    participant PromParse as Prompt DSL spec parsing
+    participant KPFQ as Known prompts found?
+    participant PromExp as Prompt expansion
+    participant COEval as Message evaluation
+    participant CCommandOutput as Chat result
+    participant CNCO as Create new chat object
+    participant CIDNone as Assume chat ID is NONE
+    participant UpdateCODB as Chat objects file update
+    participant LLMFunc as LLM Functions
+    participant LLMProm as LLM Prompts
+
+    CCommand->>IngestCODB: Chat command
+    CODBOS--)IngestCODB: Chat objects file
+    IngestCODB--)CODB: Chat objects
+    IngestCODB->>CIDQ: Chat ID specified?
+    CIDQ-->>CIDEQ: Yes
+    CIDQ-->>CIDNone: No
+    CIDNone->>CIDEQ: Assume chat ID is NONE
+    CIDEQ-->>RECO: Yes
+    CIDEQ-->>CNCO: No
+    CIDEQ--)CODB: Chat objects
+    RECO->>PromParse: Prompt DSL spec parsing
+    PromParse--)LLMProm: LLM Prompts
+    CNCO--)LLMFunc: LLM Functions
+    CNCO--)CODB: Chat objects
+    CNCO->>PromParse: Prompt DSL spec parsing
+    PromParse->>KPFQ: Known prompts found?
+    KPFQ-->>PromExp: Yes
+    KPFQ-->>COEval: No
+    PromExp--)LLMProm: LLM Prompts
+    PromExp->>COEval: Message evaluation
+    COEval--)LLMFunc: LLM evaluator invocation
+    LLMFunc--)COEval: Evaluation result
+    COEval->>UpdateCODB: Chat objects file update
+    COEval->>CCommandOutput: Chat result
+```
+
 ----
 
 ## References
