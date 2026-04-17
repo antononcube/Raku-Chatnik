@@ -31,7 +31,7 @@ Instead of `llm-chat` the command `chatnik` can be also used.
 
 ## Design
 
-Here is flowchart that describes the interaction between the host Operating System
+Here is flowchart that describes the interaction between the host Operating System 
 
 ```mermaid
 flowchart LR

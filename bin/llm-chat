@@ -1,0 +1,19 @@
+#!/usr/bin/env raku
+use v6.d;
+
+use LLM::Functions;
+use LLM::Prompts;
+use JSON::Fast;
+use XDG::BaseDirectory;
+
+#-----------------------------------------------------------
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+#| Chat with persistent LLM-chat objects.
+sub MAIN(
+        Str:D $input, #= Chat input text.
+        *%all,
+         ) {
+    say (:%all);
+}

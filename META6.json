@@ -1,0 +1,21 @@
+{
+    "name": "Chatnik",
+    "description": "CLI scripts for conversing with persistent LLM personas.",
+    "version": "0.0.1",
+    "raku": "6.d",
+    "authors": [
+        "Anton Antonov"
+    ],
+    "auth": "zef:antononcube",
+    "depends": [
+        "JSON::Fast:ver<0.19+>",
+        "LLM::Functions:<0.5.6+>",
+        "LLM::Prompts:<0.2.11+>"
+    ],
+    "provides": {
+        "Chatnik": "lib/Chatnik.rakumod"
+    },
+    "license": "Artistic-2.0",
+    "api": "0",
+    "source-url": "https://github.com/antononcube/Raku-Chatnik.git"
+}
