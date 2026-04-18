@@ -69,7 +69,7 @@ our sub import-chats() {
         my $chat = llm-chat(conf => %confSpec<name>, chat-id => $_.key, prompt => %evalSpec<context>);
 
         # For each messages make the timestamp strings to be DateTime objects
-        my $messages = $_.value<messages>.map({ $_.map({ $_.key => $_.key eq 'timestamp' ?? DateTime.new($_.value) !! $_.value })».Hash });
+        my $messages = $_.value<messages>.map({ $_.map({ $_.key => $_.key eq 'timestamp' ?? DateTime.new($_.value) !! $_.value }).Hash });
 
         # It is very hard to convince Raku not to do containerization.
         $chat.messages = |$messages;
