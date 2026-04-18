@@ -16,7 +16,7 @@ multi sub MAIN(
          ) {
 
   given $command {
-        when $_.lc ∈ <file file-name> {
+        when $_.lc ∈ <file filename file-name> {
             say Chatnik::get-chat-objects-file-name
         }
         when $_.lc ∈ <delete drop> && $all {
@@ -39,13 +39,13 @@ multi sub MAIN(
                 say '=' x 60;
                 say "Chat ID: $k";
                 say '-' x 60;
-                say %v.messages
+                say %v<messages>
             }
         }
         when $_.lc eq 'messages' {
             my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             if %chats{$chat-id}:exists {
-                %chats{$chat-id}.messages
+                say %chats{$chat-id}<messages>
             } else {
                 say $chat-id ?? "Cannot find chat object $chat-id." !! 'No chat ID is specified'
             }
