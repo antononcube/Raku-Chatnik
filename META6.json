@@ -9,7 +9,7 @@
     "auth": "zef:antononcube",
     "depends": [
         "JSON::Fast:ver<0.19+>",
-        "LLM::Functions:<0.5.6+>",
+        "LLM::Functions:<0.5.7+>",
         "LLM::Prompts:<0.2.11+>"
     ],
     "provides": {
