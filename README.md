@@ -5,7 +5,7 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 "Chatnik" uses files of the host Operating System (OS) to maintain persistent interaction with multiple LLM chat objects.
 
 "Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook) into a UNIX-like OS terminal interaction.
-(I.e. using an OS shell is used instead of a Jupyter notebook.)
+(I.e. an OS shell is used instead of a Jupyter notebook.)
 
 **Remark:** The following quote is attributed to [Ken Thompson](https://en.wikiquote.org/wiki/Ken_Thompson) about UNIX:
 
@@ -15,7 +15,7 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 
 ## Installation
 
-From Zef Ecosystem:
+From [Zef Ecosystem](https://raku.land):
 
 ```
 zef install Chatnik
@@ -53,6 +53,9 @@ llm-chat -i=yoda1 since when do you use a green light saber
 # Green, my lightsaber is. Symbol of a Jedi Consular, it is. Deep connection to the Force, it shows. Long ago, I chose this color, yes. Balance and harmony, it represents. Hmmm. Use the Force, I do. Much to learn, you still have.
 ```
 
+**Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
+
+
 ### Chat objects management
 
 The CLI script `llm-chat-meta` can be used to view and manage the chat objects used by "Chatnik".
@@ -63,7 +66,7 @@ llm-chat-meta --help
 ```
 ```
 # Usage:
-#   lm-chat-meta <command> [-i|--id|--chat-id=<Str>] [--all] -- Meta processing of persistent LLM-chat objects.
+#   llm-chat-meta <command> [-i|--id|--chat-id=<Str>] [--all] -- Meta processing of persistent LLM-chat objects.
 #   
 #     <command>                  Command, one of: file, messages, clear, delete.
 #     -i|--id|--chat-id=<Str>    Chat id; ignored if --all is specified. [default: '']
