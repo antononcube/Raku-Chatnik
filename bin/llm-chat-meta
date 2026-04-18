@@ -8,6 +8,10 @@ use JSON::Fast;
 
 my %*SUB-MAIN-OPTS = :named-anywhere;
 
+sub cannot-find(Str:D $chat-id) {
+    say $chat-id ?? "Cannot find chat object $chat-id." !! 'No chat ID is specified'
+}
+
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
         Str:D $command,                #= Command, one of: file, messages, clear, delete.
@@ -30,7 +34,7 @@ multi sub MAIN(
                 spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
                 say "Deleted chat object $chat-id."
             } else {
-                say $chat-id ?? "Cannot find chat object $chat-id." !! 'No chat ID is specified'
+                cannot-find($chat-id)
             }
         }
         when $_.lc eq 'messages' && $all {
@@ -45,9 +49,25 @@ multi sub MAIN(
         when $_.lc eq 'messages' {
             my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             if %chats{$chat-id}:exists {
-                say %chats{$chat-id}<messages>
+                .say for |%chats{$chat-id}<messages>
             } else {
-                say $chat-id ?? "Cannot find chat object $chat-id." !! 'No chat ID is specified'
+                cannot-find($chat-id)
+            }
+        }
+        when $_.lc ∈ <clear clear-messages clearmessages> && $all {
+            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+            for %chats.kv -> $k, %v {
+                %v<messages> = []
+            }
+            spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
+        }
+        when $_.lc ∈ <clear clear-messages clearmessages> {
+            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+            if %chats{$chat-id}:exists {
+                %chats{$chat-id}<messages> = [];
+                spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
+            } else {
+                cannot-find($chat-id)
             }
         }
         default {
