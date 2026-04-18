@@ -28,6 +28,9 @@ my %chats-updated = Chatnik::import-chats();
 ok %chats-updated<yoda>.eval('Hi! Who are you?');
 
 ## 5
+ok Chatnik::evaluate-message('Hi, again!', %chats-updated, chat-id => 'yoda');
+
+## 6
 ok Chatnik::export-chats(%chats-updated), 'export updated chats';
 
 done-testing;
