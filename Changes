@@ -1,4 +1,8 @@
-Revision updates for the Raku package "Chatnik"
+Revision history of the Raku package "Chatnik"
 
-0.0.1 2026-04-17
-    - First version
+0.0.2 2026-04-18
+    - More comprehensive documentation (in the README.)
+    - Minor bug fixes.
+
+0.0.1 2026-04-18
+    - First version.
