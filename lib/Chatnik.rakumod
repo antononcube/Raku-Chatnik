@@ -3,6 +3,7 @@ use v6.d;
 unit module Chatnik;
 
 use LLM::Functions;
+use LLM::Prompts;
 use JSON::Fast;
 use XDG::BaseDirectory :terms;
 
@@ -59,10 +60,103 @@ our sub export-chats(%chats where %chats.values.all ~~ LLM::Functions::Chat:D) {
 our sub import-chats() {
     my %importedChats = from-json(slurp(Chatnik::get-chat-objects-file-name()));
 
-    my %chatsSession = %importedChats.map({
+    my %chats = %importedChats.map({
         my %confSpec = $_.value<llm-evaluator><conf>;
-        my $conf = llm-configuration(%confSpec<name>, model => %confSpec<model>, prompts => %confSpec<prompts> );
-        my $llm-evaluator = LLM::Functions::EvaluatorChatGemini.new(:$conf);
+
+        my $conf = llm-configuration(%confSpec<name>, model => %confSpec<model>, prompts => %confSpec<prompts>);
+
+        my %evalSpec = $_.value<llm-evaluator>.grep(*.key ne 'conf');
+        my $llm-evaluator = LLM::Functions::EvaluatorChat.new(:$conf, |%evalSpec);
+        # $llm-evaluator.context gets TWEAKed
+        if %evalSpec<context> { $llm-evaluator.context = %evalSpec<context> }
+
         $_.key => LLM::Functions::Chat.new(:$llm-evaluator, chat-id => $_.key, messages => |$_.value<messages>);
-    })
+    });
+
+    return %chats;
 }
+
+#==========================================================
+# LLM configuration by any args
+#==========================================================
+
+our sub llm-configuration-by-args(*%args) {
+    # Find known &llm-configuration parameters by class attributes
+    my @knownParamNames = LLM::Functions::Configuration.^attributes.map(*.name)».subst(/ <[$@%&]> <[!.]>? /).sort;
+
+    # Filter
+    my %confArgs = %args.grep({ $_.key ∈ @knownParamNames });
+
+    # Process provide::model shortcut spec
+    if %confArgs<model> && %confArgs<model>.contains('::') {
+        my ($provider, $model) = %confArgs<model>.split('::');
+        # Provider names are different than the model families.
+        $provider = do given $provider {
+            when 'openai' { 'chatgpt' }
+            when 'google' { 'gemini' }
+            default { $_ }
+        }
+        %confArgs<model> = $model;
+        %confArgs<name> = %confArgs<name> // %confArgs<conf> // $provider
+    }
+
+    # Make the LLM configuration
+    my %confArgs2 = %confArgs.grep(*.key ∉ <name conf>);
+    return llm-configuration(%confArgs<name>, |%confArgs2);
+}
+
+#==========================================================
+# Evaluate input message
+#==========================================================
+
+# This sub's code is almost the same as the code Magic::Chat.preprocess of "Jupyter::Chatbook".
+our sub evaluate-message(Str:D $input, %chats, *%args) {
+
+    # Process arguments
+    # Is it needed?
+    
+    # Get 
+    my $chat-id = %args<chat-id> // %args<id> // %args<i> // 'NONE';
+
+    # Expand the prompt if given
+    my $prompt = %args<prompt> // '';
+    if $prompt {
+        $prompt = llm-prompt-expand($prompt);
+        %args<prompt> = $prompt;
+    }
+
+    # Warn if an existing chat-id is used and are also given a prompt and configuration spec
+    if ( (%args<prompt> // False) || (%args<conf> // False) ) && (%chats{$chat-id}:exists) {
+        note "No new chat object is created.\nUsing chat object with id: ⎡{$chat-id}⎦, and number of messages: {%chats{$chat-id}.messages.elems}.";
+    }
+
+    # Create an LLM configuration
+    my $conf = llm-configuration-by-args(|%args);
+
+    # Make the chat-object args
+    my %chat-args = :$conf, :$chat-id;
+
+    # Get chat object
+    my $chatObj = %chats{$chat-id} // llm-chat(|%chat-args);
+
+    # We get a  delimiter from the configuration
+    # my $sep = $chatObj.llm-evaluator.conf.prompt-delimiter;
+    # But for prompt expansions it is most like better to use new line
+    my $sep = "\n";
+
+    # Call LLM's interface function
+    my $res;
+    try {
+        $res = $chatObj.eval(llm-prompt-expand($input, messages => $chatObj.messages.map({ $_<content> }).Array, :$sep));
+    }
+
+    if $! {
+        note "Cannot process the input with chat object's LLM evaluator.";
+        $res = $!.payload;
+    }
+
+    # Make sure it is registered
+    %chats{$chat-id} = $chatObj;
+
+    return $res;
+} 
