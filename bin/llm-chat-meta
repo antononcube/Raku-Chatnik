@@ -23,6 +23,16 @@ multi sub MAIN(
         when $_.lc ∈ <file filename file-name> {
             say Chatnik::get-chat-objects-file-name
         }
+        when $_.lc ∈ <personas chats chat-objects chatobjects> {
+            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+            if %chats {
+                for %chats.kv -> $k, %v {
+                    say {chat-id => $k, context => %v<llm-evaluator><context>, messages => %v<messages>.elems}
+                }
+            } else {
+                say 'No chat objects.'
+            }
+        }
         when $_.lc ∈ <delete drop> && $all {
             Chatnik::export-chats({});
             say 'Deleted all chats objects.'
