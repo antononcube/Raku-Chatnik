@@ -2,8 +2,6 @@
 use v6.d;
 
 use Chatnik;
-use JSON::Fast;
-use XDG::BaseDirectory;
 
 #-----------------------------------------------------------
 
