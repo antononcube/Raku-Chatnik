@@ -19,12 +19,31 @@ multi sub MAIN(
         Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
          ) {
 
-  given $command {
+    my $simple = False;
+    given $command {
         when $_.lc ∈ <file filename file-name> {
+            $simple = True;
             say Chatnik::get-chat-objects-file-name
         }
+        when $_.lc ∈ <delete drop> && $all {
+            $simple = True;
+            Chatnik::export-chats({});
+            say 'Deleted all chats objects.'
+        }
+    }
+
+    exit(0) if $simple;
+
+    if !Chatnik::get-chat-objects-file-name.IO.f {
+        say 'No chat objects file.';
+        exit(0)
+    }
+
+    my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+
+    given $command {
         when $_.lc ∈ <personas chats chat-objects chatobjects> {
-            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+
             if %chats {
                 for %chats.kv -> $k, %v {
                     say {chat-id => $k, context => %v<llm-evaluator><context>, messages => %v<messages>.elems}
@@ -33,12 +52,7 @@ multi sub MAIN(
                 say 'No chat objects.'
             }
         }
-        when $_.lc ∈ <delete drop> && $all {
-            Chatnik::export-chats({});
-            say 'Deleted all chats objects.'
-        }
         when $_.lc ∈ <delete drop> {
-            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             if %chats{$chat-id}:exists {
                 %chats{$chat-id}:delete;
                 spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
@@ -48,7 +62,6 @@ multi sub MAIN(
             }
         }
         when $_.lc eq 'messages' && $all {
-            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             for %chats.kv -> $k, %v {
                 say '=' x 60;
                 say "Chat ID: $k";
@@ -57,7 +70,6 @@ multi sub MAIN(
             }
         }
         when $_.lc eq 'messages' {
-            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             if %chats{$chat-id}:exists {
                 .say for |%chats{$chat-id}<messages>
             } else {
@@ -65,14 +77,12 @@ multi sub MAIN(
             }
         }
         when $_.lc ∈ <clear clear-messages clearmessages> && $all {
-            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             for %chats.kv -> $k, %v {
                 %v<messages> = []
             }
             spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
         }
         when $_.lc ∈ <clear clear-messages clearmessages> {
-            my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
             if %chats{$chat-id}:exists {
                 %chats{$chat-id}<messages> = [];
                 spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));

@@ -14,8 +14,11 @@ multi sub MAIN(
          ) {
 
     # Ingest the chat objects
-    # Has to be optimized soon -- it is ineffective to create all chat objects.
-    my %chats = Chatnik::import-chats();
+    my %chats = %();
+    if Chatnik::get-chat-objects-file-name.IO.f {
+        # Has to be optimized soon -- it is ineffective to create all chat objects.
+        %chats = Chatnik::import-chats()
+    }
 
     # Evaluate message
     my $res = Chatnik::evaluate-message($input, %chats, |%args);
