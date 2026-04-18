@@ -66,6 +66,7 @@ multi sub MAIN(
             if %chats{$chat-id}:exists {
                 %chats{$chat-id}<messages> = [];
                 spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
+                say "Cleared the messages of chat object $chat-id."
             } else {
                 cannot-find($chat-id)
             }
