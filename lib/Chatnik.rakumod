@@ -140,7 +140,7 @@ our sub evaluate-message(Str:D $input, %chats, *%args) {
     my $conf = llm-configuration-by-args(|%args);
 
     # Make the chat-object args
-    my %chat-args = { :$conf, :$chat-id } , %args;
+    my %chat-args = { :$conf, :$chat-id } , %args.grep({ $_.key ∉ <conf name model> }).Hash;
 
     # Get chat object
     my $chatObj = %chats{$chat-id} // llm-chat(|%chat-args);
@@ -155,7 +155,6 @@ our sub evaluate-message(Str:D $input, %chats, *%args) {
     try {
         $res = $chatObj.eval(llm-prompt-expand($input, messages => $chatObj.messages.map({ $_<content> }).Array, :$sep));
     }
-
     if $! {
         note "Cannot process the input with chat object's LLM evaluator.";
         $res = $!.payload;
