@@ -15,13 +15,15 @@ ok Chatnik::evaluate-message('Hi, there!', %chats, chat-id => 'mh1', prompt=>'@M
 subtest {
     isa-ok %chats<mh1>, LLM::Functions::Chat:D, 'chat object is present';
     like %chats<mh1>.llm-evaluator.context, / ^ 'You are the Mad Hatter' .* /, 'expected context of the LLM-evaluator object';
-}
-
+}, 'Mad Hatter as expected';
 
 ## 3
 ok to-json(Chatnik::export-ready(%chats)), 'export ready';
 
 ## 4
 ok Chatnik::export-chats(%chats), 'export new chats';
+
+## 5
+ok Chatnik::evaluate-message('What are the populations of the Brazilian states? #NothingElse|JSON' , %chats, chat-id => 'beta', model => 'ollama::gemma3:12b');
 
 done-testing;
