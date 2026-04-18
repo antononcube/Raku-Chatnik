@@ -113,6 +113,46 @@ llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Bra
 llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee /dev/tty | pbcopy
 ```
 
+### Make a mind-map of a file
+
+Here is an example in which a file is ingested (this README) and the prompt ["MermaidDiagram"](https://resources.wolframcloud.com/PromptRepository/resources/MermaidDiagram/) 
+is applied to file's content:
+
+```
+llm-chat -i=mmd "$(cat README.md)" --model=ollama::gemma4:26b --prompt="$(llm-prompt 'MermaidDiagram')"
+```
+
+```mermaid
+mindmap
+  root("Chatnik")
+    "Purpose"
+      "Raku package"
+      "CLI for LLM personas"
+      "Persistent interaction via OS files"
+    "Features"
+      "Multiple LLM providers"
+      "LLM Prompts integration"
+      "OS shell access"
+    "LLM Access"
+      "Ollama"
+      "Llamafile"
+      "Service Providers"
+        "OpenAI"
+        "Gemini"
+        "MistralAI"
+    "Scripts"
+      "llm-chat"
+      "llm-chat-meta"
+        "List chats"
+        "Manage messages"
+        "Delete chats"
+    "Installation"
+      "Zef Ecosystem"
+      "GitHub"
+```
+
+**Remark:** `llm-prompt` is the CLI script of ["LLM::Prompts"](https://github.com/antononcube/Raku-LLM-Prompts), [AAp2].
+
 -----
 
 ## Implementation details
