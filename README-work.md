@@ -4,12 +4,17 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 
 "Chatnik" uses files of the host Operating System (OS) to maintain persistent interaction with multiple LLM chat objects.
 
-"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook) into a UNIX-like OS terminal interaction.
-(I.e. an OS shell is used instead of a Jupyter notebook.)
+"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook), [AAp3], 
+into a UNIX-like OS terminal interaction.
+(I.e. an OS shell is used instead of a Jupyter notebook.) 
 
-**Remark:** The following quote is attributed to [Ken Thompson](https://en.wikiquote.org/wiki/Ken_Thompson) about UNIX:
+There are several consequences of this approach:
 
-> We have persistent objects, they're called files.
+- Multiple LLMs and LLM provider can be used
+- The chat messages can use the provided by the package ["LLM::Prompts"](https://github.com/antononcube/Raku-LLM-Prompts), [AAp2]:
+  - Prompts collection
+  - Prompt spec DSL and related prompt expansion
+- Easy access to OS shell functionalities 
 
 ----
 
@@ -29,7 +34,21 @@ zef install https://github.com/antononcube/Raku-Chatnik.git
 
 ----
 
-## Usage examples
+## LLM access setup
+
+There are several options for using LLMs with this package:
+
+- Install and run [Ollama](https://ollama.com)
+  - For the corresponding setup see ["WWW::Ollama"](https://github.com/antononcube/Raku-WWW-Ollama)
+- Run a [llamafile / LLaMA model](https://github.com/mozilla-ai/llamafile)
+  - For the corresponding setup see ["WWW::LLaMA"](https://github.com/antononcube/Raku-WWW-LLaMA)
+- Have programmatic access to LLMs of service providers like [OpenAI](https://developers.openai.com/api/docs/models) or [Gemini](https://ai.google.dev/gemini-api/docs/models)
+  - For the corresponding setup see ["WWWW::OpenAI"](https://github.com/antononcube/Raku-WWW-OpenAI), ["WWWW::Gemini"](https://github.com/antononcube/Raku-WWW-Gemini), or ["WWW::MistralAI"](https://github.com/antononcube/Raku-WWW-MistralAI)
+
+
+----
+
+## Basic usage examples
 
 ### A few turns chat
 
@@ -49,14 +68,21 @@ llm-chat -i=yoda1 since when do you use a green light saber
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
 
+-----
 
-### Chat objects management
+## Chat objects management
 
 The CLI script `llm-chat-meta` can be used to view and manage the chat objects used by "Chatnik".
 Here is its usage message:
 
 ```shell
 llm-chat-meta --help
+```
+
+List all chat objects ("chats" and "personas" are synonyms to "list"):
+
+```shell
+llm-chat-meta list
 ```
 
 Here we see the messages of "yoda1":
@@ -71,10 +97,27 @@ Here we clear the messages:
 llm-chat-meta clear -i yoda1
 ```
 
+-----
+
+## Advanced usage examples
+
+### Asking for a result in specific format
+
+```shell
+llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Brazilian states? #NothingElse|JSON' 
+```
+
+### Make a request, echo, and place in clipboard  
+
+```shell
+llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee /dev/tty | pbcopy
+```
 
 -----
 
-## Design
+## Implementation details
+
+### Architectural design
 
 Here is a flowchart that describes the interaction between the host Operating System and chat objects database:
 
@@ -213,6 +256,17 @@ sequenceDiagram
     COEval->>UpdateCODB: Chat objects file update
     COEval->>CCommandOutput: Chat result
 ```
+
+### Persistent chat objects
+
+Using a JSON file for keeping the chat objects database is a fairly straightforward idea. 
+Efficiency considerations for "using the OS to manage the database" are probably can not that important 
+because LLMs invocation is (much) slower in comparison.
+
+**Remark:** The following quote is attributed to [Ken Thompson](https://en.wikiquote.org/wiki/Ken_Thompson) about UNIX:
+
+> We have persistent objects, they're called files.
+
 
 ----
 

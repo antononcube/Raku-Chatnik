@@ -4,12 +4,17 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 
 "Chatnik" uses files of the host Operating System (OS) to maintain persistent interaction with multiple LLM chat objects.
 
-"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook) into a UNIX-like OS terminal interaction.
-(I.e. an OS shell is used instead of a Jupyter notebook.)
+"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook), [AAp3], 
+into a UNIX-like OS terminal interaction.
+(I.e. an OS shell is used instead of a Jupyter notebook.) 
 
-**Remark:** The following quote is attributed to [Ken Thompson](https://en.wikiquote.org/wiki/Ken_Thompson) about UNIX:
+There are several consequences of this approach:
 
-> We have persistent objects, they're called files.
+- Multiple LLMs and LLM provider can be used
+- The chat messages can use the provided by the package ["LLM::Prompts"](https://github.com/antononcube/Raku-LLM-Prompts), [AAp2]:
+  - Prompts collection
+  - Prompt spec DSL and related prompt expansion
+- Easy access to OS shell functionalities 
 
 ----
 
@@ -29,7 +34,21 @@ zef install https://github.com/antononcube/Raku-Chatnik.git
 
 ----
 
-## Usage examples
+## LLM access setup
+
+There are several options for using LLMs with this package:
+
+- Install and run [Ollama](https://ollama.com)
+  - For the corresponding setup see ["WWW::Ollama"](https://github.com/antononcube/Raku-WWW-Ollama)
+- Run a [llamafile / LLaMA model](https://github.com/mozilla-ai/llamafile)
+  - For the corresponding setup see ["WWW::LLaMA"](https://github.com/antononcube/Raku-WWW-LLaMA)
+- Have programmatic access to LLMs of service providers like [OpenAI](https://developers.openai.com/api/docs/models) or [Gemini](https://ai.google.dev/gemini-api/docs/models)
+  - For the corresponding setup see ["WWWW::OpenAI"](https://github.com/antononcube/Raku-WWW-OpenAI), ["WWWW::Gemini"](https://github.com/antononcube/Raku-WWW-Gemini), or ["WWW::MistralAI"](https://github.com/antononcube/Raku-WWW-MistralAI)
+
+
+----
+
+## Basic usage examples
 
 ### A few turns chat
 
@@ -41,7 +60,7 @@ The script `llm-chat` is used to create and chat with LLM personas (chat objects
 llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 ```
 ```
-# Hmmm. Yoda, I am. Jedi Master, wise and old. Help you, I can. Yes, hmmm.
+# Yoda, I am. Jedi Master, wise and old. Guide you, I will, if ready you are. Hmm. Yes.
 ```
 
 2. Continue the conversation with "yoda1":
@@ -50,13 +69,14 @@ llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 llm-chat -i=yoda1 since when do you use a green light saber
 ```
 ```
-# Green, my lightsaber is. Symbol of a Jedi Consular, it is. Deep connection to the Force, it shows. Long ago, I chose this color, yes. Balance and harmony, it represents. Hmmm. Use the Force, I do. Much to learn, you still have.
+# Green, my lightsaber is, yes. A symbol of the Jedi Consular, it is. Wisdom and harmony, it represents. Many years have I wielded it, hmmm. Power and knowledge, balance they bring. Understand, you do?
 ```
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
 
+-----
 
-### Chat objects management
+## Chat objects management
 
 The CLI script `llm-chat-meta` can be used to view and manage the chat objects used by "Chatnik".
 Here is its usage message:
@@ -68,9 +88,20 @@ llm-chat-meta --help
 # Usage:
 #   llm-chat-meta <command> [-i|--id|--chat-id=<Str>] [--all] -- Meta processing of persistent LLM-chat objects.
 #   
-#     <command>                  Command, one of: file, messages, clear, delete.
+#     <command>                  Command, one of: clear, delete, file, list, messages.
 #     -i|--id|--chat-id=<Str>    Chat id; ignored if --all is specified. [default: '']
 #     --all                      Whether to apply the command to all chat objects or not. [default: False]
+```
+
+List all chat objects ("chats" and "personas" are synonyms to "list"):
+
+```shell
+llm-chat-meta list
+```
+```
+# {chat-id => yoda1, context => You are Yoda. 
+# Respond to ALL inputs in the voice of Yoda from Star Wars. 
+# Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length., messages => 4}
 ```
 
 Here we see the messages of "yoda1":
@@ -79,10 +110,10 @@ Here we see the messages of "yoda1":
 llm-chat-meta messages -i yoda1
 ```
 ```
-# {content => hi who are you, role => user, timestamp => 2026-04-18T11:17:17.389634-04:00}
-# {content => Hmmm. Yoda, I am. Jedi Master, wise and old. Help you, I can. Yes, hmmm., role => assistant, timestamp => 2026-04-18T11:17:18.990963-04:00}
-# {content => since when do you use a green light saber, role => user, timestamp => 2026-04-18T11:17:19.412694-04:00}
-# {content => Green, my lightsaber is. Symbol of a Jedi Consular, it is. Deep connection to the Force, it shows. Long ago, I chose this color, yes. Balance and harmony, it represents. Hmmm. Use the Force, I do. Much to learn, you still have., role => assistant, timestamp => 2026-04-18T11:17:22.278950-04:00}
+# {content => hi who are you, role => user, timestamp => 2026-04-18T14:46:08.953784-04:00}
+# {content => Yoda, I am. Jedi Master, wise and old. Guide you, I will, if ready you are. Hmm. Yes., role => assistant, timestamp => 2026-04-18T14:46:11.002331-04:00}
+# {content => since when do you use a green light saber, role => user, timestamp => 2026-04-18T14:46:11.426382-04:00}
+# {content => Green, my lightsaber is, yes. A symbol of the Jedi Consular, it is. Wisdom and harmony, it represents. Many years have I wielded it, hmmm. Power and knowledge, balance they bring. Understand, you do?, role => assistant, timestamp => 2026-04-18T14:46:12.471854-04:00}
 ```
 
 Here we clear the messages:
@@ -94,10 +125,63 @@ llm-chat-meta clear -i yoda1
 # Cleared the messages of chat object yoda1.
 ```
 
+-----
+
+## Advanced usage examples
+
+### Asking for a result in specific format
+
+```shell
+llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Brazilian states? #NothingElse|JSON' 
+```
+```
+# ```json
+# {
+#   "Acre": 876858,
+#   "Alagoas": 3351426,
+#   "Amapá": 844738,
+#   "Amazonas": 4278399,
+#   "Bahia": 14703893,
+#   "Ceará": 9187103,
+#   "Distrito Federal": 3045045,
+#   "Espírito Santo": 3940000,
+#   "Goiás": 7092263,
+#   "Maranhão": 7016280,
+#   "Mato Grosso": 3515083,
+#   "Mato Grosso do Sul": 3036406,
+#   "Minas Gerais": 21627175,
+#   "Pará": 8690722,
+#   "Paraíba": 4116706,
+#   "Paraná": 11478267,
+#   "Pernambuco": 9618273,
+#   "Piauí": 2606384,
+#   "Rio de Janeiro": 17422973,
+#   "Rio Grande do Norte": 3375386,
+#   "Rio Grande do Sul": 11356996,
+#   "Rondônia": 1150079,
+#   "Roraima": 517096,
+#   "Santa Catarina": 7142572,
+#   "São Paulo": 46287126,
+#   "Sergipe": 5617496,
+#   "Tocantins": 1572741
+# }
+# ```
+```
+
+### Make a request, echo, and place in clipboard  
+
+```shell
+llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee >(pbcopy)
+```
+```
+# ls -1 | tee >(pbcopy)
+```
 
 -----
 
-## Design
+## Implementation details
+
+### Architectural design
 
 Here is a flowchart that describes the interaction between the host Operating System and chat objects database:
 
@@ -236,6 +320,17 @@ sequenceDiagram
     COEval->>UpdateCODB: Chat objects file update
     COEval->>CCommandOutput: Chat result
 ```
+
+### Persistent chat objects
+
+Using a JSON file for keeping the chat objects database is a fairly straightforward idea. 
+Efficiency considerations for "using the OS to manage the database" are probably can not that important 
+because LLMs invocation is (much) slower in comparison.
+
+**Remark:** The following quote is attributed to [Ken Thompson](https://en.wikiquote.org/wiki/Ken_Thompson) about UNIX:
+
+> We have persistent objects, they're called files.
+
 
 ----
 
