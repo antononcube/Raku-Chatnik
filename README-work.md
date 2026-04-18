@@ -4,7 +4,7 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 
 "Chatnik" uses files of the host Operating System (OS) to maintain persistent interaction with multiple LLM chat object.
 
-"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package "Jupyter::Chatbook" into UNIX-like OS terminal interaction.
+"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook) into a UNIX-like OS terminal interaction.
 (I.e. using an OS shell is used instead of a Jupyter notebook.)
 
 **Remark:** The following quote is attributed to [Ken Thompson](https://en.wikiquote.org/wiki/Ken_Thompson) about UNIX:
