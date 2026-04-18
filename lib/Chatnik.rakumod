@@ -62,15 +62,19 @@ our sub import-chats() {
 
     my %chats = %importedChats.map({
         my %confSpec = $_.value<llm-evaluator><conf>;
+        my %evalSpec = $_.value<llm-evaluator>.grep(*.key ne 'conf');
 
         my $conf = llm-configuration(%confSpec<name>, model => %confSpec<model>, prompts => %confSpec<prompts>);
 
-        my %evalSpec = $_.value<llm-evaluator>.grep(*.key ne 'conf');
-        my $llm-evaluator = LLM::Functions::EvaluatorChat.new(:$conf, |%evalSpec);
-        # $llm-evaluator.context gets TWEAKed
-        if %evalSpec<context> { $llm-evaluator.context = %evalSpec<context> }
+        my $chat = llm-chat(conf => %confSpec<name>, chat-id => $_.key, prompt => %evalSpec<context>);
 
-        $_.key => LLM::Functions::Chat.new(:$llm-evaluator, chat-id => $_.key, messages => |$_.value<messages>);
+        # For each messages make the timestamp strings to be DateTime objects
+        my $messages = $_.value<messages>.map({ $_.map({ $_.key => $_.key eq 'timestamp' ?? DateTime.new($_.value) !! $_.value })».Hash });
+
+        # It is very hard to convince Raku not to do containerization.
+        $chat.messages = |$messages;
+
+        $_.key => $chat
     });
 
     return %chats;
