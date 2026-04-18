@@ -1,0 +1,74 @@
+use v6.d;
+
+use Chatnik;
+use LLM::Prompts;
+use LLM::Functions;
+use JSON::Fast;
+
+use Test;
+
+# Gem expert
+my $prompt = 'You are a gem expert and you give concise answers.';
+my $chat1 = llm-chat(chat-id => 'gem-expert-talk', conf => 'ChatOllama', :$prompt);
+
+# Simulate chatting
+$chat1.messages = [
+    {:content("What is the most transparent gem?"), :role("user"), :timestamp(DateTime.new(2026,4,18,6,21,3.5037310123443604,:timezone(-14400)))},
+    {:content("Diamonds are generally considered to be the most transparent gemstone, with exceptional clarity due to their pure carbon crystal structure."), :role("assistant"), :timestamp(DateTime.new(2026,4,18,6,21,7.035662651062012,:timezone(-14400)))},
+    {:content("Ok. What are the second and third most transparent gems?"), :role("user"), :timestamp(DateTime.new(2026,4,18,6,21,9.233429431915283,:timezone(-14400)))},
+    {:content("The next two most transparent gemstones after diamonds are:\n\n1. Moissanite: a lab-created gemstone known for its high refractive index and excellent brilliance.\n2. White sapphire (corundum): a corundum crystal with a high degree of internal clarity, making it very transparent.\n\nNote that transparency can also refer to the absence of inclusions, so diamonds are often considered the most \"inclusion-free\" gemstone."), :role("assistant"), :timestamp(DateTime.new(2026,4,18,6,21,10.499512672424316,:timezone(-14400)))}
+];
+
+isa-ok $chat1.messages, Array:D;
+is $chat1.messages.all ~~ Map:D, True;
+
+# Yoda
+my $chat2 = llm-chat(chat-id => 'yoda', conf => 'ChatOllama', prompt => llm-prompt('Yoda'));
+
+my %chats = [$chat1, $chat2].map({ $_.chat-id => $_});
+
+## 1
+ok to-json(Chatnik::export-ready(%chats)), 'export ready';
+
+## 2
+ok Chatnik::export-chats(%chats), 'export chats';
+
+## 3
+ok Chatnik::import-chats(), 'import chats';
+
+## 4
+subtest {
+    my %chats-imported = Chatnik::import-chats();
+
+    # keys
+    is-deeply %chats-imported.keys.sort, <gem-expert-talk yoda>, 'expected keys';
+
+    # types
+    isa-ok %chats-imported<gem-expert-talk>, LLM::Functions::Chat;
+    isa-ok %chats-imported<yoda>, LLM::Functions::Chat;
+
+    # messages
+    my $c = %chats-imported<gem-expert-talk>;
+    is $c.messages.elems, $chat1.messages.elems, 'expected number of messages';
+
+    # check
+    for ^$c.messages.elems -> $i {
+        # Time stamps can have truncated (milli/nano)seconds.
+        # For example:
+        # original: DateTime.new(2026,4,18,6,21,3.5037310123443604,:timezone(-14400))
+        # imported: DateTime.new(2026,4,18,6,21,3.503731,:timezone(-14400))
+
+        my %m1 = $c.messages[$i]; %m1<timestamp> = %m1<timestamp>.whole-second;
+        my %m2 = $chat1.messages[$i]; %m2<timestamp> = %m2<timestamp>.whole-second;
+        is-deeply %m1, %m2, "expected message $i";
+    }
+
+    # evaluator configuration
+    is $c.llm-evaluator.conf.name, $chat1.llm-evaluator.conf.name;
+
+    # context
+    is $c.llm-evaluator.context, $chat1.llm-evaluator.context, 'expected context';
+
+}, 'compare exported vs imported';
+
+done-testing;

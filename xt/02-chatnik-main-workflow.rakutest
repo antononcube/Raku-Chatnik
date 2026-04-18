@@ -25,10 +25,6 @@ ok Chatnik::import-chats(), 'import chats';
 
 ## 4
 my %chats-updated = Chatnik::import-chats();
-#say to-json(Chatnik::export-ready(%chats-updated<yoda>));
-#.say for %chats-updated<yoda>.Hash;
-
-#say %chats-updated<yoda>.eval('Hi! Who are you?');
 ok %chats-updated<yoda>.eval('Hi! Who are you?');
 
 ## 5
