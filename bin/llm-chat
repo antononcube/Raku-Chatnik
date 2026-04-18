@@ -10,7 +10,7 @@ use XDG::BaseDirectory;
 my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Chat with persistent LLM-chat objects.
-sub MAIN(
+multi sub MAIN(
         Str:D $input, #= Chat input text.
         *%args,       #= LLM configuration named arguments.
          ) {
@@ -26,5 +26,13 @@ sub MAIN(
     Chatnik::export-chats(%chats);
 
     # Print results
-    put $res;
+    say $res;
+}
+
+#| Using multiple words as input
+multi sub MAIN(
+        *@words,   #= Multi-word input.
+        *%args     #= LLM configuration named arguments.
+               ) {
+    MAIN(@words.join(' '), |%args)
 }
