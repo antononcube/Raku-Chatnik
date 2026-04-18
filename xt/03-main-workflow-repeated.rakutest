@@ -1,0 +1,40 @@
+use v6.d;
+
+use Chatnik;
+use LLM::Prompts;
+use LLM::Functions;
+use JSON::Fast;
+
+use Test;
+
+my $prompt = 'You are a gem expert and you give concise answers.';
+my $chat1 = llm-chat(chat-id => 'gem-expert-talk', conf => 'ChatOllama', :$prompt);
+
+my $chat2 = llm-chat(chat-id => 'yoda', conf => 'ChatOllama', prompt => llm-prompt('Yoda'));
+
+my %chats = [$chat1, $chat2].map({ $_.chat-id => $_});
+
+## 1
+ok Chatnik::export-chats(%chats), 'export chats';
+
+my %chats-updated = Chatnik::import-chats();
+
+## 2
+ok Chatnik::evaluate-message('Hi! Who are you?', %chats-updated, chat-id => 'yoda');
+
+## 3
+ok Chatnik::export-chats(%chats-updated), 'export updated chats';
+
+## 4
+my %chats-updated2 = Chatnik::import-chats();
+ok Chatnik::evaluate-message('Hi, again!', %chats-updated2, chat-id => 'yoda');
+
+## 5
+ok Chatnik::export-chats(%chats-updated2), 'export updated chats';
+
+## 6
+my %chats-updated3 = Chatnik::import-chats();
+ok Chatnik::evaluate-message('How often do you train?', %chats-updated2, chat-id => 'yoda');
+
+
+done-testing;
