@@ -24,6 +24,6 @@ ok to-json(Chatnik::export-ready(%chats)), 'export ready';
 ok Chatnik::export-chats(%chats), 'export new chats';
 
 ## 5
-ok Chatnik::evaluate-message('What are the populations of the Brazilian states? #NothingElse|JSON' , %chats, chat-id => 'beta', model => 'ollama::gemma3:12b');
+ok Chatnik::evaluate-message('What are the populations of the Brazilian states? #NothingElse|JSON', {}, chat-id => 'beta', model => 'ollama::gemma3:4b'):echo;
 
 done-testing;
