@@ -76,7 +76,7 @@ llm-chat-meta clear -i yoda1
 
 ## Design
 
-Here is flowchart that describes the interaction between the host Operating System 
+Here is a flowchart that describes the interaction between the host Operating System and chat objects database:
 
 ```mermaid
 flowchart LR
@@ -166,7 +166,7 @@ flowchart LR
 ```
 
 
-Here is the corresponding sequence diagram:
+Here is the corresponding UML Sequence diagram:
 
 ```mermaid
 sequenceDiagram
