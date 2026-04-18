@@ -29,7 +29,9 @@ our sub get-chat-objects-file-name() {
 our proto sub export-ready($chat) {*}
 
 multi sub export-ready(LLM::Functions::Chat:D $chat) {
-    $chat.Hash.deepmap({
+    my %res = $chat.Hash;
+    %res<llm-evaluator><conf><evaluator> = Whatever;
+    %res.deepmap({
         given $_ {
             when Whatever { 'Whatever' }
             when WhateverCode { 'WhateverCode' }
@@ -117,7 +119,7 @@ our sub llm-configuration-by-args(*%args) {
 our sub evaluate-message(Str:D $input, %chats, *%args) {
 
     # Process arguments
-    # Is it needed?
+    %args .= map({ $_.key => $_.value.clone });
     
     # Get 
     my $chat-id = %args<chat-id> // %args<id> // %args<i> // 'NONE';
@@ -138,7 +140,7 @@ our sub evaluate-message(Str:D $input, %chats, *%args) {
     my $conf = llm-configuration-by-args(|%args);
 
     # Make the chat-object args
-    my %chat-args = :$conf, :$chat-id;
+    my %chat-args = { :$conf, :$chat-id } , %args;
 
     # Get chat object
     my $chatObj = %chats{$chat-id} // llm-chat(|%chat-args);
