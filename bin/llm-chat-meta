@@ -14,7 +14,7 @@ sub cannot-find(Str:D $chat-id) {
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                #= Command, one of: file, messages, clear, delete.
+        Str:D $command,                #= Command, one of: clear, delete, file, list, messages.
         Str:D :i(:id(:$chat-id)) = '', #= Chat id; ignored if --all is specified.
         Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
          ) {
@@ -42,7 +42,7 @@ multi sub MAIN(
     my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
 
     given $command {
-        when $_.lc ∈ <personas chats chat-objects chatobjects> {
+        when $_.lc ∈ <list personas chats chat-objects chatobjects> {
 
             if %chats {
                 for %chats.kv -> $k, %v {
