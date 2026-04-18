@@ -11,21 +11,63 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 
 > We have persistent objects, they're called files.
 
-Here is an example:
+----
 
-1. First create _and_ chat with an LLM persona "yoda1" (using the [Yoda chat persona](https://resources.wolframcloud.com/PromptRepository/resources/Yoda/)):
+## Installation
+
+From Zef Ecosystem:
 
 ```
+zef install Chatnik
+```
+
+From GitHub:
+
+```
+zef install https://github.com/antononcube/Raku-Chatnik.git
+```
+
+----
+
+## Usage examples
+
+### A few turns chat
+
+The script `llm-chat` is used to create and chat with LLM personas (chat objects):
+
+1. Create _and_ chat with an LLM persona named "yoda1" (using the [Yoda chat persona](https://resources.wolframcloud.com/PromptRepository/resources/Yoda/)):
+
+```shell
 llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 ```
 
 2. Continue the conversation with "yoda1":
 
-```
+```shell
 llm-chat -i=yoda1 since when do you use a green light saber
 ```
 
-Instead of `llm-chat` the command `chatnik` can be also used.
+### Chat objects management
+
+The CLI script `llm-chat-meta` can be used to view and manage the chat objects used by "Chatnik".
+Here is its usage message:
+
+```shell
+llm-chat-meta --help
+```
+
+Here we see the messages of "yoda1":
+
+```shell
+llm-chat-meta messages -i yoda1
+```
+
+Here we clear the messages:
+
+```shell
+llm-chat-meta clear -i yoda1
+```
+
 
 -----
 
@@ -168,6 +210,39 @@ sequenceDiagram
     COEval->>UpdateCODB: Chat objects file update
     COEval->>CCommandOutput: Chat result
 ```
+
+----
+
+## TODO
+
+- [ ] TODO Implementation
+  - [X] DONE Chats DB export 
+  - [X] DONE Chats DB import 
+  - [X] DONE LLM persona creation
+  - [X] DONE LLM persona repeated interaction
+  - [ ] TODO CLI `llm-chat`
+    - [X] DONE Simple: `$input` & `*%args`
+    - [X] DONE Multi-word: `@words` & `*%args`
+    - [ ] TODO From pipeline
+    - [ ] TODO Format?
+  - [ ] TODO CLI `llm-chat-meta`
+    - [X] DONE Commands reaction
+    - [X] DONE View messages for an id
+    - [X] DONE Clear messages for an id
+    - [X] DONE Delete chat for an id
+    - [X] DONE View all chats
+    - [X] DONE Delete all chats
+    - [ ] TODO Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
+- [ ] TODO Unit tests
+  - [X] DONE Export & import
+  - [X] DONE Main workflow
+  - [X] DONE Persona repeated interaction
+  - [X] DONE Persona creation
+  - [ ] TODO CLI tests
+- [ ] TODO Documentation
+  - [X] DONE Flowchart & sequence diagram
+  - [X] DONE Usage examples
+  - [ ] TODO Demo video
 
 ----
 
