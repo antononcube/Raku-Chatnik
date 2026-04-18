@@ -1,5 +1,14 @@
 use v6.d;
 use Chatnik;
+use LLM::Functions;
 use Test;
+
+## 1
+ok Chatnik::llm-configuration-by-args(model => 'ollama::gemma:26b');
+
+## 2
+my $conf1 = Chatnik::llm-configuration-by-args(model => 'ollama::gemma:26b', api-user-id => 'local');
+my $conf2 = llm-configuration('ChatOllama', model => 'gemma:26b', api-user-id => 'local');
+is-deeply $conf1.Hash, $conf2.Hash, 'same configurations';
 
 done-testing;
