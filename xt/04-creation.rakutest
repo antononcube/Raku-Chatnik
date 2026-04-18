@@ -1,0 +1,27 @@
+use v6.d;
+
+use Chatnik;
+use LLM::Prompts;
+use LLM::Functions;
+use JSON::Fast;
+
+use Test;
+
+## 1
+my %chats;
+ok Chatnik::evaluate-message('Hi, there!', %chats, chat-id => 'mh1', prompt=>'@MadHatter' );
+
+## 2
+subtest {
+    isa-ok %chats<mh1>, LLM::Functions::Chat:D, 'chat object is present';
+    like %chats<mh1>.llm-evaluator.context, / ^ 'You are the Mad Hatter' .* /, 'expected context of the LLM-evaluator object';
+}
+
+
+## 3
+ok to-json(Chatnik::export-ready(%chats)), 'export ready';
+
+## 4
+ok Chatnik::export-chats(%chats), 'export new chats';
+
+done-testing;
