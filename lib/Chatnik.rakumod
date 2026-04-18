@@ -103,7 +103,7 @@ our sub llm-configuration-by-args(*%args) {
             default { $_ }
         }
         %confArgs<model> = $model;
-        %confArgs<name> = %confArgs<name> // %confArgs<conf> // $provider
+        %confArgs<name> = $provider
     }
 
     # Make the LLM configuration
