@@ -1,8 +1,7 @@
 #!/usr/bin/env raku
 use v6.d;
 
-use LLM::Functions;
-use LLM::Prompts;
+use Chatnik;
 use JSON::Fast;
 use XDG::BaseDirectory;
 
@@ -13,7 +12,19 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 #| Chat with persistent LLM-chat objects.
 sub MAIN(
         Str:D $input, #= Chat input text.
-        *%all,
+        *%args,       #= LLM configuration named arguments.
          ) {
-    say (:%all);
+
+    # Ingest the chat objects
+    # Has to be optimized soon -- it is ineffective to create all chat objects.
+    my %chats = Chatnik::import-chats();
+
+    # Evaluate message
+    my $res = Chatnik::evaluate-message($input, %chats, |%args);
+
+    # Export chat objects
+    Chatnik::export-chats(%chats);
+
+    # Print results
+    put $res;
 }
