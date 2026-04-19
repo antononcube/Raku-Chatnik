@@ -106,6 +106,19 @@ multi sub MAIN(
                 cannot-find($chat-id)
             }
         }
+        when $_.lc ∈ <message take-message takemessage> && !$all {
+            if %chats{$chat-id}:exists {
+                if (%args<index>:exists) && %args<index> ~~ Int:D {
+                    my $index = %args<index>;
+                    my $m = $index >= 0 ?? %chats{$chat-id}<messages>[$index] !! %chats{$chat-id}<messages>[*+$index];
+                    say $m<content> // $m;
+                } else {
+                    say 'The message index is not specfied; use --index.'
+                }
+            } else {
+                cannot-find($chat-id)
+            }
+        }
         when $_.lc ∈ <clear clear-messages clearmessages> && $all {
             for %chats.kv -> $k, %v {
                 %v<messages> = []
