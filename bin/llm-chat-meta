@@ -71,7 +71,10 @@ multi sub MAIN(
         }
         when $_.lc eq 'messages' {
             if %chats{$chat-id}:exists {
-                .say for |%chats{$chat-id}<messages>
+                for %chats{$chat-id}<messages>.kv -> $k, %v {
+                    say "$k : {to-json(%v)}"
+                }
+                #say Chatnik::to-chat-object(%chats{$chat-id}).form.
             } else {
                 cannot-find($chat-id)
             }
