@@ -58,24 +58,28 @@ our sub export-chats(%chats where %chats.values.all ~~ LLM::Functions::Chat:D) {
 #==========================================================
 # Import
 #==========================================================
+our sub to-chat-object(%spec, :$chat-id = Whatever) {
+    my %confSpec = %spec<llm-evaluator><conf>;
+    my %evalSpec = %spec<llm-evaluator>.grep(*.key ne 'conf');
+
+    my $conf = llm-configuration(%confSpec<name>, model => %confSpec<model>, prompts => %confSpec<prompts>);
+
+    my $chat = llm-chat(conf => %confSpec<name>, chat-id => $chat-id // %spec<chat-id>, prompt => %evalSpec<context>);
+
+    # For each messages make the timestamp strings to be DateTime objects
+    my $messages = %spec<messages>.map({ $_.map({ $_.key => $_.key eq 'timestamp' ?? DateTime.new($_.value) !! $_.value }).Hash });
+
+    # It is very hard to convince Raku not to do containerization.
+    $chat.messages = |$messages;
+
+    $chat
+}
 
 our sub import-chats() {
     my %importedChats = from-json(slurp(Chatnik::get-chat-objects-file-name()));
 
     my %chats = %importedChats.map({
-        my %confSpec = $_.value<llm-evaluator><conf>;
-        my %evalSpec = $_.value<llm-evaluator>.grep(*.key ne 'conf');
-
-        my $conf = llm-configuration(%confSpec<name>, model => %confSpec<model>, prompts => %confSpec<prompts>);
-
-        my $chat = llm-chat(conf => %confSpec<name>, chat-id => $_.key, prompt => %evalSpec<context>);
-
-        # For each messages make the timestamp strings to be DateTime objects
-        my $messages = $_.value<messages>.map({ $_.map({ $_.key => $_.key eq 'timestamp' ?? DateTime.new($_.value) !! $_.value }).Hash });
-
-        # It is very hard to convince Raku not to do containerization.
-        $chat.messages = |$messages;
-
+        my $chat = to-chat-object($_.value, chat-id => $_.key);
         $_.key => $chat
     });
 
