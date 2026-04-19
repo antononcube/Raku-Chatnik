@@ -115,12 +115,49 @@ llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and cop
 
 ### Make a mind-map of a file
 
-Here is an example in which a file is ingested (this README) and the prompt ["MermaidDiagram"](https://resources.wolframcloud.com/PromptRepository/resources/MermaidDiagram/) 
-is applied to file's content:
+Consider the task of making an (LLM derived) mind map over a certain document. (Say, this REDME.)
+There are several ways to do that.
+
+#### 1
+
+1. Put file's content to be the positional input argument 
+2. Use the prompt ["MermaidDiagram"](https://resources.wolframcloud.com/PromptRepository/resources/MermaidDiagram/) in `--prompt`
 
 ```
-llm-chat -i=mmd "$(cat README.md)" --model=ollama::gemma4:26b --prompt="$(llm-prompt 'MermaidDiagram')"
+llm-chat -i=mmd "$(cat README.md)" --model=ollama::gemma4:26b --prompt=@MermaidDiagram
 ```
+
+#### 2
+
+1. Put file's content to be the positional input argument
+2. Expand the prompt "manually" via `llm-prompt` provided by ["LLM::Prompts"](https://github.com/antononcube/Raku-LLM-Prompts), [AAp2]
+
+```
+llm-chat -i=mmd "$(cat README.md)" --model=ollama::gemma4:26b --prompt="$(llm-prompt 'MermaidDiagram'  below)"
+```
+
+**Remark:** This example shows another computation result can be used as a prompt. 
+I.e. no need to rely on the automatic prompt expansion.
+
+#### 3
+
+1. Give the prompt ["MermaidDiagram"](https://resources.wolframcloud.com/PromptRepository/resources/MermaidDiagram/) as input
+2. Put file's content to be the value of `--prompt`
+   - Put additional prompting for further interaction 
+
+```
+llm-chat -i=mmd @MermaidDiagram --model=ollama::gemma4:26b --prompt="FOCUS TEXT START:: $(cat README.md) ::END OF FOCUS TEXT. If it is not clear which text to use, use FOCUS TEXT."
+```
+
+This command allows to do further tasks with the file content as context. For example:
+
+```
+llm-chat -i=mmd '!ThinkingHatsFeedback'
+```
+
+#### Result
+
+The commands above produce result similar to this diagram:
 
 ```mermaid
 mindmap
@@ -151,7 +188,6 @@ mindmap
       "GitHub"
 ```
 
-**Remark:** `llm-prompt` is the CLI script of ["LLM::Prompts"](https://github.com/antononcube/Raku-LLM-Prompts), [AAp2].
 
 -----
 
