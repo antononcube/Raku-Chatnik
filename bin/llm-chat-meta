@@ -6,17 +6,35 @@ use JSON::Fast;
 
 #-----------------------------------------------------------
 
-my %*SUB-MAIN-OPTS = :named-anywhere;
+sub get-n-range(%args, $elems) {
+    my ($min, $max) = 0, $elems - 1;
+    if (%args<n>:exists) && %args<n> ~~ Int:D {
+        my $n = %args<n>;
+        if $n >= 0 { $max = $n - 1 } else { $min = $elems + $n}
+    }
+    return {:$min, :$max};
+}
+
+#-----------------------------------------------------------
 
 sub cannot-find(Str:D $chat-id) {
     say $chat-id ?? "Cannot find chat object $chat-id." !! 'No chat ID is specified'
 }
 
+#-----------------------------------------------------------
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+# Very likely a separate USAGE definition has to done. For example:
+# Int:D :$n = -1,  #= For the commands "clear" and "messages" specifies the number of messages: positive number means first $n, negative last $n. Ignored with --all.
+# Ind:D :$index = -1, #= For the command "message" $n is a reference index.
+
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                #= Command, one of: clear, delete, file, list, messages.
+        Str:D $command,                #= Command, one of: card, clear, delete, file, list, message, messages.
         Str:D :i(:id(:$chat-id)) = '', #= Chat id; ignored if --all is specified.
         Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
+        *%args,                        #= Additional, optional arguments for the commands: clear, message, messages.
          ) {
 
     my $simple = False;
@@ -61,6 +79,13 @@ multi sub MAIN(
                 cannot-find($chat-id)
             }
         }
+        when $_.lc ∈ <card form table-form> && !$all {
+            if %chats{$chat-id}:exists {
+                say Chatnik::to-chat-object(%chats{$chat-id}).form
+            } else {
+                cannot-find($chat-id)
+            }
+        }
         when $_.lc eq 'messages' && $all {
             for %chats.kv -> $k, %v {
                 say '=' x 60;
@@ -71,8 +96,10 @@ multi sub MAIN(
         }
         when $_.lc eq 'messages' {
             if %chats{$chat-id}:exists {
-                for %chats{$chat-id}<messages>.kv -> $k, %v {
-                    say "$k : {to-json(%v)}"
+                my @messages = |%chats{$chat-id}<messages>;
+                my ($min, $max) = |get-n-range(%args, @messages.elems)<min max>;
+                for @messages.kv -> $k, %v {
+                    say "$k : {to-json(%v)}" if $min ≤ $k ≤ $max
                 }
                 #say Chatnik::to-chat-object(%chats{$chat-id}).form.
             } else {
@@ -87,9 +114,18 @@ multi sub MAIN(
         }
         when $_.lc ∈ <clear clear-messages clearmessages> {
             if %chats{$chat-id}:exists {
-                %chats{$chat-id}<messages> = [];
+                my $ins = 'messages ';
+                if %args<n>:exists {
+                    my @messages = |%chats{$chat-id}<messages>;
+                    my ($min, $max) = |get-n-range(%args, @messages.elems)<min max>;
+                    $ins = $min == $max ?? "message $min " !! "messages from $min to $max ";
+                    @messages.splice($min, $max - $min + 1);
+                    %chats{$chat-id}<messages> = |@messages
+                } else {
+                    %chats{$chat-id}<messages> = [];
+                }
                 spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
-                say "Cleared the messages of chat object $chat-id."
+                say "Cleared the {$ins}of chat object $chat-id."
             } else {
                 cannot-find($chat-id)
             }
