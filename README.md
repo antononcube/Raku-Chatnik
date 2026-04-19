@@ -244,7 +244,7 @@ llm-chat -i=mmd '!ThinkingHatsFeedback'
 
 #### Result
 
-The commands above produce result similar to this diagram:
+The commands above produce results similar to this diagram:
 
 ```mermaid
 mindmap
