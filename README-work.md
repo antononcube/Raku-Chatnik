@@ -185,30 +185,30 @@ The commands above produce results similar to this diagram:
 ```mermaid
 mindmap
   root("Chatnik")
-    "Purpose"
-      "Raku package"
-      "CLI for LLM personas"
-      "Persistent interaction via OS files"
-    "Features"
-      "Multiple LLM providers"
-      "LLM Prompts integration"
-      "OS shell access"
-    "LLM Access"
-      "Ollama"
-      "Llamafile"
-      "Service Providers"
-        "OpenAI"
-        "Gemini"
-        "MistralAI"
-    "Scripts"
-      "llm-chat"
-      "llm-chat-meta"
-        "List chats"
-        "Manage messages"
-        "Delete chats"
-    "Installation"
-      "Zef Ecosystem"
-      "GitHub"
+    Purpose
+      Raku package
+      CLI for LLM personas
+      Persistent interaction via OS files
+    Features
+      Multiple LLM providers
+      LLM Prompts integration
+      OS shell access
+    LLM Access
+      Ollama
+      Llamafile
+      Service Providers
+        OpenAI
+        Gemini
+        MistralAI
+    Scripts
+      llm-chat
+      llm-chat-meta
+        List chats
+        Manage messages
+        Delete chats
+    Installation
+      Zef Ecosystem
+      GitHub
 ```
 
 ### Render results Markdown with dedicated programs
@@ -229,8 +229,8 @@ Get the LLM (chat object) answer -- via `llm-chat-meta` -- put into a temporary 
 tmpfile="$TMPDIR/llmans.md"; llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
 ```
 
-The command above works on macOS. On Linux instead of using temporary dictory `--suffix` can be passed to `mktemp`.
-For example:
+The command above works on macOS. On Linux instead of explicitly creating a file in the temporary dictory,
+the argument `--suffix` can be passed to `mktemp`. For example:
 
 ```
 tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
