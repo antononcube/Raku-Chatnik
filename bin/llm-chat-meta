@@ -109,7 +109,8 @@ multi sub MAIN(
         when $_.lc ∈ <last-message lastmessage> && !$all {
             if %chats{$chat-id}:exists {
                 if %chats{$chat-id}<messages> {
-                    say %chats{$chat-id}<messages>.tail
+                    my $m = %chats{$chat-id}<messages>.tail;
+                    say $m<content> // $m;
                 } else {
                     say "The chat object $chat-id has no messages."
                 }
