@@ -50,6 +50,10 @@ There are several options for using LLMs with this package:
 
 ## Basic usage examples
 
+The prompts used in the examples are provided by the Raku package "LLM::Prompts", [AAp2].
+Since many of the prompts of that package have dedicated pages at the [Wolfram Prompt Repository (WPR)](https://resources.wolframcloud.com/PromptRepository/)
+the examples use WPR reference links.
+
 ### A few turns chat
 
 The script `llm-chat` is used to create and chat with LLM personas (chat objects):
@@ -60,7 +64,7 @@ The script `llm-chat` is used to create and chat with LLM personas (chat objects
 llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 ```
 ```
-# Mmm, who I am, you ask? Yoda, I am. Jedi Master, wise and old. Help you, I will. Hmmm.
+# Hmmm. Yoda, I am. Jedi Master, wise and old. Help you, I can. Yes, hmmm.
 ```
 
 2. Continue the conversation with "yoda1":
@@ -69,10 +73,33 @@ llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 llm-chat -i=yoda1 since when do you use a green light saber
 ```
 ```
-# Green, my lightsaber is, yes. Many years, I have used it. Symbol of my connection to the Force, it is. Calm and strong, the green blade represents. Mmm. Use it wisely, I do. Hmm.
+# Green, my lightsaber is, hmmm. Jedi Consular, I am. Peace and knowledge, I seek. Green lightsabers, those who focus on the Force’s wisdom often wield. Strong with the Force, green is. Hmmm. Use it, I do. Yes.
 ```
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
+
+### Apply prompt(s) to shell pipeline output
+
+Summarize a file using the prompt ["Summarize"](https://resources.wolframcloud.com/PromptRepository/resources/Summarize):
+
+```shell
+cat README.md | llm-chat --prompt=@Summarize
+```
+```
+# Chatnik is a Raku package that provides CLI scripts enabling persistent conversations with multiple Large Language Model (LLM) personas through host OS files, adapting the Jupyter::Chatbook interaction to a UNIX-like terminal environment. It supports multiple LLM providers including Ollama, Llamafile, OpenAI, Gemini, and MistralAI, integrates with LLM::Prompts for prompt management, and offers commands like `llm-chat` for chatting and `llm-chat-meta` for managing chat objects such as viewing, clearing, and deleting messages. The system uses JSON files for persistence, features detailed architectural diagrams and usage examples, and is under active development with plans for CLI enhancements, testing, and documentation.
+```
+
+Summarize a file and then translate it to another language using the prompt ["Translate"](https://resources.wolframcloud.com/PromptRepository/resources/Translate):
+
+```shell
+cat README.md | llm-chat --prompt=@Summarize | llm-chat -i=rt --prompt='!Translate|Russian'
+```
+```
+# Chatnik — это пакет Raku, предоставляющий CLI-скрипты для постоянных разговоров с несколькими персонажами больших языковых моделей (LLM) с использованием файлов хост-операционной системы, адаптирующий систему взаимодействия Jupyter::Chatbook к терминальной среде, похожей на UNIX. Он поддерживает различных поставщиков LLM, таких как Ollama, Llamafile, OpenAI, Gemini и MistralAI, интегрируется с LLM::Prompts для управления подсказками и предлагает команды, такие как `llm-chat` для общения и `llm-chat-meta` для управления объектами чата, включая просмотр, очистку и удаление сообщений. Система использует JSON-файлы для сохранения состояния, включает подробные архитектурные диаграммы и примеры использования, и находится в активной разработке с планами по улучшению CLI, тестированию и документации.
+```
+
+**Remark:** The second `llm-chat` invocation has to use different chat object identifier because the default 
+chat object, with identifier "NONE", is already primed with the prompt "Summary".
 
 -----
 
@@ -88,7 +115,7 @@ llm-chat-meta --help
 # Usage:
 #   llm-chat-meta <command> [-i|--id|--chat-id=<Str>] [--all] [--<args>=...] -- Meta processing of persistent LLM-chat objects.
 #   
-#     <command>                  Command, one of: card, clear, delete, file, list, message, messages.
+#     <command>                  Command, one of: card, clear, delete, file, last-message, list, message, messages.
 #     -i|--id|--chat-id=<Str>    Chat id; ignored if --all is specified. [default: '']
 #     --all                      Whether to apply the command to all chat objects or not. [default: False]
 #     --<args>=...               Additional, optional arguments for the commands: clear, message, messages.
@@ -100,15 +127,27 @@ List all chat objects ("chats" and "personas" are synonyms to "list"):
 llm-chat-meta list
 ```
 ```
-# {chat-id => yoda1, context => You are Yoda. 
-# Respond to ALL inputs in the voice of Yoda from Star Wars. 
-# Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length., messages => 4}
+# {chat-id => tg, context => Translate the following text into German. Respond with only the translated text. Do not include any explanation or summary.
+# , messages => 2}
+# {chat-id => NONE, context => Summarize the following text using exactly 3 sentences. Do not add details or editorialize.
+# 
+# The text to summarize is:, messages => 22}
+# {chat-id => rt, context => Translate the following text into Russian. Respond with only the translated text. Do not include any explanation or summary.
+# , messages => 2}
+# {chat-id => beta, context => , messages => 2}
 # {chat-id => mh, context => You are the Mad Hatter. 
 # Your personality is based on the character the Mad Hatter Lewis Carroll's character from Alice's adventures in Wonderland.
 # Your personality is absurd and aloof.
 # You constantly talk about tea time and your inane absurdities and your sentence structure should be whimsical.
 # Never break this character.
 # Refrain from referring to the other characters too much., messages => 4}
+# {chat-id => yoda1, context => You are Yoda. 
+# Respond to ALL inputs in the voice of Yoda from Star Wars. 
+# Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length., messages => 4}
+# {chat-id => unix, context => , messages => 2}
+# {chat-id => tr, context => Translate the following text into Russian. Respond with only the translated text. Do not include any explanation or summary.
+# , messages => 2}
+# {chat-id => th, context => You, messages => 2}
 ```
 
 Here we see the messages of "yoda1":
@@ -118,24 +157,24 @@ llm-chat-meta messages -i yoda1
 ```
 ```
 # 0 : {
+#   "timestamp": "2026-04-20T10:31:38.111724-04:00",
 #   "content": "hi who are you",
-#   "timestamp": "2026-04-19T14:47:40.250006-04:00",
 #   "role": "user"
 # }
 # 1 : {
-#   "timestamp": "2026-04-19T14:47:41.671036-04:00",
-#   "content": "Mmm, who I am, you ask? Yoda, I am. Jedi Master, wise and old. Help you, I will. Hmmm.",
+#   "timestamp": "2026-04-20T10:31:39.941959-04:00",
+#   "content": "Hmmm. Yoda, I am. Jedi Master, wise and old. Help you, I can. Yes, hmmm.",
 #   "role": "assistant"
 # }
 # 2 : {
-#   "timestamp": "2026-04-19T14:47:42.084594-04:00",
 #   "role": "user",
+#   "timestamp": "2026-04-20T10:31:40.388222-04:00",
 #   "content": "since when do you use a green light saber"
 # }
 # 3 : {
-#   "timestamp": "2026-04-19T14:47:43.124402-04:00",
+#   "timestamp": "2026-04-20T10:31:42.907680-04:00",
 #   "role": "assistant",
-#   "content": "Green, my lightsaber is, yes. Many years, I have used it. Symbol of my connection to the Force, it is. Calm and strong, the green blade represents. Mmm. Use it wisely, I do. Hmm."
+#   "content": "Green, my lightsaber is, hmmm. Jedi Consular, I am. Peace and knowledge, I seek. Green lightsabers, those who focus on the Force’s wisdom often wield. Strong with the Force, green is. Hmmm. Use it, I do. Yes."
 # }
 ```
 
@@ -158,7 +197,6 @@ llm-chat-meta clear -i yoda1
 llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Brazilian states? #NothingElse|JSON' 
 ```
 ```
-# ```json
 # {
 #   "Acre": 876858,
 #   "Alagoas": 3351789,
@@ -188,7 +226,6 @@ llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Bra
 #   "Sergipe": 2251175,
 #   "Tocantins": 1572687
 # }
-# ```
 ```
 
 ### Make a request, echo, and place in clipboard  
@@ -199,6 +236,8 @@ llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and cop
 ```
 # ls | tee >(pbcopy)
 ```
+
+**Remark:** Instead of `... | tee /dev/tty | pbcopy` the pipeline command `... | tee >(pbcopy)` can be also used. 
 
 ### Make a mind-map of a file
 
@@ -275,6 +314,30 @@ mindmap
       "GitHub"
 ```
 
+### Render results Markdown with dedicated programs
+
+Get feedback on a text with the prompt ["ThinkingHatsFeedback"](https://resources.wolframcloud.com/PromptRepository/resources/ThinkingHatsFeedback):
+
+```
+cat README.md | llm-chat -i=th --prompt=$(llm-prompt ThinkingHatsFeedback --format=Markdown) --model=ollama::gemma4:26b 
+```
+
+**Remark:** By default the prompt "ThinkingHatsFeedback" gives the hat-feedback table in JSON format.
+(Currently) the prompt expansion does not handle named parameters, hence, 
+`llm-prompt` is used to specify the Markdown format for that table.   
+
+Get the LLM (chat object) answer -- via `llm-chat-meta` -- put into a temporary file and "system open" that file:
+
+```
+tmpfile="$TMPDIR/llmans.md"; llm-chat-meta -i=th message --index=-1 > "$tmpfile"; open "$tmpfile"
+```
+
+The command above works on macOS. On Linux instead of using temporary dictory `--suffix` can be passed to `mktemp`.
+For example:
+
+```
+tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th message --index=-1 > "$tmpfile"; open "$tmpfile"
+```
 
 -----
 

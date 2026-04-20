@@ -50,6 +50,10 @@ There are several options for using LLMs with this package:
 
 ## Basic usage examples
 
+The prompts used in the examples are provided by the Raku package "LLM::Prompts", [AAp2].
+Since many of the prompts of that package have dedicated pages at the [Wolfram Prompt Repository (WPR)](https://resources.wolframcloud.com/PromptRepository/)
+the examples use WPR reference links.
+
 ### A few turns chat
 
 The script `llm-chat` is used to create and chat with LLM personas (chat objects):
@@ -67,6 +71,23 @@ llm-chat -i=yoda1 since when do you use a green light saber
 ```
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
+
+### Apply prompt(s) to shell pipeline output
+
+Summarize a file using the prompt ["Summarize"](https://resources.wolframcloud.com/PromptRepository/resources/Summarize):
+
+```shell
+cat README.md | llm-chat --prompt=@Summarize
+```
+
+Summarize a file and then translate it to another language using the prompt ["Translate"](https://resources.wolframcloud.com/PromptRepository/resources/Translate):
+
+```shell
+cat README.md | llm-chat --prompt=@Summarize | llm-chat -i=rt --prompt='!Translate|Russian'
+```
+
+**Remark:** The second `llm-chat` invocation has to use different chat object identifier because the default 
+chat object, with identifier "NONE", is already primed with the prompt "Summary".
 
 -----
 
@@ -112,6 +133,8 @@ llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Bra
 ```shell
 llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee /dev/tty | pbcopy
 ```
+
+**Remark:** Instead of `... | tee /dev/tty | pbcopy` the pipeline command `... | tee >(pbcopy)` can be also used.
 
 ### Make a mind-map of a file
 
@@ -188,6 +211,30 @@ mindmap
       "GitHub"
 ```
 
+### Render results Markdown with dedicated programs
+
+Get feedback on a text with the prompt ["ThinkingHatsFeedback"](https://resources.wolframcloud.com/PromptRepository/resources/ThinkingHatsFeedback):
+
+```
+cat README.md | llm-chat -i=th --prompt=$(llm-prompt ThinkingHatsFeedback --format=Markdown) --model=ollama::gemma4:26b 
+```
+
+**Remark:** By default the prompt "ThinkingHatsFeedback" gives the hat-feedback table in JSON format.
+(Currently) the prompt expansion does not handle named parameters, hence, 
+`llm-prompt` is used to specify the Markdown format for that table.   
+
+Get the LLM (chat object) answer -- via `llm-chat-meta` -- put into a temporary file and "system open" that file:
+
+```
+tmpfile="$TMPDIR/llmans.md"; llm-chat-meta -i=th message --index=-1 > "$tmpfile"; open "$tmpfile"
+```
+
+The command above works on macOS. On Linux instead of using temporary dictory `--suffix` can be passed to `mktemp`.
+For example:
+
+```
+tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th message --index=-1 > "$tmpfile"; open "$tmpfile"
+```
 
 -----
 
