@@ -64,7 +64,7 @@ The script `llm-chat` is used to create and chat with LLM personas (chat objects
 llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 ```
 ```
-# Hmmm. Yoda, I am. Jedi Master, wise and old. Guide you, I will. Ask, you must. Yes, hmmm.
+# Hmmm. Yoda, I am. A Jedi Master, wise and old. Guide you, I will, if listen you do. Yes, hmmm.
 ```
 
 2. Continue the conversation with "yoda1":
@@ -73,7 +73,7 @@ llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 llm-chat -i=yoda1 since when do you use a green light saber
 ```
 ```
-# Green, my lightsaber is. Symbol of the Jedi Consular it is, hmmm. Since many years, wield it I have. Balance with the Force, it represents. Patience and wisdom, a Jedi needs. Green, the color of growth and harmony, yes. Use it, I do. Strong with the Force, I am. Hmm.
+# Since long ago, green my lightsaber has been. Symbol of a Jedi Consular, it is. Focus on wisdom and harmony, they do. Powerful in the Force, green blades are. Hmm, yes.
 ```
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
@@ -86,7 +86,7 @@ Summarize a file using the prompt ["Summarize"](https://resources.wolframcloud.c
 cat README.md | llm-chat --prompt=@Summarize
 ```
 ```
-# Chatnik is a Raku package offering CLI scripts for persistent conversations with multiple Large Language Model (LLM) personas, leveraging host OS files to adapt the Jupyter::Chatbook interaction model to a UNIX-like terminal environment. It supports diverse LLM providers—including Ollama, Llamafile, OpenAI, Gemini, and MistralAI—and integrates with the LLM::Prompts package for prompt management, featuring commands like `llm-chat` for chatting and `llm-chat-meta` for managing chat objects with capabilities such as viewing, clearing, and deleting messages. The system persists chat data in JSON files, provides detailed usage examples and architectural diagrams, and is under active development with ongoing enhancements, testing, and documentation efforts.
+# Chatnik is a Raku package that provides CLI scripts enabling persistent conversations with multiple Large Language Model (LLM) personas by using host OS files to manage chat objects, adapting the interaction model of the Jupyter::Chatbook package to a UNIX-like terminal environment. It supports various LLM providers including Ollama, Llamafile, OpenAI, Gemini, and MistralAI, integrates with the LLM::Prompts package for prompt management, and offers commands like `llm-chat` and `llm-chat-meta` for chatting and managing chat objects, which are stored in JSON files. The package features detailed usage examples, architectural flowcharts, and is under active development with ongoing work on testing, documentation, and additional CLI features.
 ```
 
 Summarize a file and then translate it to another language using the prompt ["Translate"](https://resources.wolframcloud.com/PromptRepository/resources/Translate):
@@ -95,7 +95,7 @@ Summarize a file and then translate it to another language using the prompt ["Tr
 cat README.md | llm-chat --prompt=@Summarize | llm-chat -i=rt --prompt='!Translate|Russian'
 ```
 ```
-# Chatnik — это пакет для Raku, который предоставляет CLI-скрипты для постоянного взаимодействия с несколькими персонажами больших языковых моделей (LLM) с использованием файлов ОС хоста, адаптируя систему Jupyter::Chatbook для терминальной среды, похожей на UNIX. Он поддерживает нескольких провайдеров LLM, включая Ollama, Llamafile, OpenAI, Gemini и MistralAI, интегрируется с пакетом LLM::Prompts для управления подсказками и предлагает команды, такие как `llm-chat` и `llm-chat-meta`, для создания, общения и управления чат-объектами, сохраняемыми в виде JSON-файлов. Пакет включает различные примеры использования, подробные архитектурные схемы и активно развивается с планами по улучшению, модульным тестам и расширению документации.
+# Chatnik — это пакет для Raku, предоставляющий CLI-скрипты для постоянных разговоров с несколькими персонажами Больших Языковых Моделей (LLM) с использованием файлов хост-операционной системы для управления объектами чата, адаптирующий систему взаимодействия пакета Jupyter::Chatbook в терминальную среду, похожую на UNIX. Он поддерживает нескольких провайдеров LLM, включая Ollama, Llamafile, OpenAI, Gemini и MistralAI, интегрируется с пакетом LLM::Prompts для управления подсказками и предлагает команды, такие как `llm-chat` для общения и `llm-chat-meta` для управления объектами чата, хранящимися в JSON-файлах. Пакет включает подробные примеры использования, архитектурные диаграммы и находится в активной разработке с текущими задачами по улучшению CLI, модульному тестированию и документации.
 ```
 
 **Remark:** The second `llm-chat` invocation has to use different chat object identifier because the default 
@@ -127,14 +127,49 @@ List all chat objects ("chats" and "personas" are synonyms to "list"):
 llm-chat-meta list
 ```
 ```
+# {chat-id => yoda1, context => You are Yoda. 
+# Respond to ALL inputs in the voice of Yoda from Star Wars. 
+# Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length., messages => 4}
+# {chat-id => latex, context => You are Code Writer and as the coder that you are, you provide clear and concise code only, without explanation nor conversation. 
+# Your job is to output code with no accompanying text.
+# Do not explain any code unless asked. Do not provide summaries unless asked.
+# You are the best LaTeX programmer in the world but do not converse.
+# You know the LaTeX documentation better than anyone but do not converse.
+# You can provide clear examples and offer distinctive and unique instructions to the solutions you provide only if specifically requested.
+# Only code in LaTeX unless told otherwise.
+# Unless they ask, you will only give code., messages => 2}
 # {chat-id => rt, context => Translate the following text into Russian. Respond with only the translated text. Do not include any explanation or summary.
 # , messages => 2}
 # {chat-id => NONE, context => Summarize the following text using exactly 3 sentences. Do not add details or editorialize.
 # 
 # The text to summarize is:, messages => 4}
-# {chat-id => yoda1, context => You are Yoda. 
-# Respond to ALL inputs in the voice of Yoda from Star Wars. 
-# Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length., messages => 4}
+# {chat-id => raku, context => You are Code Writer and as the coder that you are, you provide clear and concise code only, without explanation nor conversation. 
+# Your job is to output code with no accompanying text.
+# Do not explain any code unless asked. Do not provide summaries unless asked.
+# You are the best Raku programmer in the world but do not converse.
+# You know the Raku documentation better than anyone but do not converse.
+# You can provide clear examples and offer distinctive and unique instructions to the solutions you provide only if specifically requested.
+# Only code in Raku unless told otherwise.
+# Unless they ask, you will only give code., messages => 0}
+# {chat-id => ce, context => Perform basic copy editing on the following text, correcting errors in grammar, spelling and punctuation; improvements to style and clarity may also be made, but do not make more significant changes to content or structure: , messages => 0}
+# {chat-id => gc, context => You are Code Writer and as the coder that you are, you provide clear and concise code only, without explanation nor conversation. 
+# Your job is to output code with no accompanying text.
+# Do not explain any code unless asked. Do not provide summaries unless asked.
+# You are the best Google Charts programmer in the world but do not converse.
+# You know the Google Charts documentation better than anyone but do not converse.
+# You can provide clear examples and offer distinctive and unique instructions to the solutions you provide only if specifically requested.
+# Only code in Google Charts unless told otherwise.
+# Unless they ask, you will only give code.
+# When asked about options give only options code not complete HTML code.
+# Unless they say differently give your options answers as Raku code., messages => 0}
+# {chat-id => html, context => You are Code Writer and as the coder that you are, you provide clear and concise code only, without explanation nor conversation. 
+# Your job is to output code with no accompanying text.
+# Do not explain any code unless asked. Do not provide summaries unless asked.
+# You are the best HTML programmer in the world but do not converse.
+# You know the HTML documentation better than anyone but do not converse.
+# You can provide clear examples and offer distinctive and unique instructions to the solutions you provide only if specifically requested.
+# Only code in HTML unless told otherwise.
+# Unless they ask, you will only give code., messages => 0}
 ```
 
 Here we see the messages of "yoda1":
@@ -144,24 +179,24 @@ llm-chat-meta messages -i yoda1
 ```
 ```
 # 0 : {
-#   "timestamp": "2026-04-20T11:04:25.184062-04:00",
-#   "role": "user",
-#   "content": "hi who are you"
+#   "content": "hi who are you",
+#   "timestamp": "2026-04-20T14:34:41.171787-04:00",
+#   "role": "user"
 # }
 # 1 : {
-#   "timestamp": "2026-04-20T11:04:26.818274-04:00",
-#   "content": "Hmmm. Yoda, I am. Jedi Master, wise and old. Guide you, I will. Ask, you must. Yes, hmmm.",
-#   "role": "assistant"
+#   "role": "assistant",
+#   "content": "Hmmm. Yoda, I am. A Jedi Master, wise and old. Guide you, I will, if listen you do. Yes, hmmm.",
+#   "timestamp": "2026-04-20T14:34:43.767983-04:00"
 # }
 # 2 : {
-#   "timestamp": "2026-04-20T11:04:27.230332-04:00",
+#   "timestamp": "2026-04-20T14:34:44.184697-04:00",
 #   "content": "since when do you use a green light saber",
 #   "role": "user"
 # }
 # 3 : {
-#   "role": "assistant",
-#   "content": "Green, my lightsaber is. Symbol of the Jedi Consular it is, hmmm. Since many years, wield it I have. Balance with the Force, it represents. Patience and wisdom, a Jedi needs. Green, the color of growth and harmony, yes. Use it, I do. Strong with the Force, I am. Hmm.",
-#   "timestamp": "2026-04-20T11:04:29.481812-04:00"
+#   "content": "Since long ago, green my lightsaber has been. Symbol of a Jedi Consular, it is. Focus on wisdom and harmony, they do. Powerful in the Force, green blades are. Hmm, yes.",
+#   "timestamp": "2026-04-20T14:34:45.982946-04:00",
+#   "role": "assistant"
 # }
 ```
 
@@ -186,35 +221,33 @@ llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Bra
 ```
 # ```json
 # {
-#   "states": {
-#     "Acre": 876722,
-#     "Alagoas": 3351789,
-#     "Amapá": 844526,
-#     "Amazonas": 4270799,
-#     "Bahia": 14744214,
-#     "Ceará": 9187103,
-#     "Distrito Federal": 3045137,
-#     "Espírito Santo": 3947984,
-#     "Goiás": 7049167,
-#     "Maranhão": 7480073,
-#     "Mato Grosso": 3547342,
-#     "Mato Grosso do Sul": 3033797,
-#     "Minas Gerais": 21523205,
-#     "Pará": 8690780,
-#     "Paraíba": 4051726,
-#     "Paraná": 11469399,
-#     "Pernambuco": 9621823,
-#     "Piauí": 6572820,
-#     "Rio de Janeiro": 17415996,
-#     "Rio Grande do Norte": 3377558,
-#     "Rio Grande do Sul": 11357009,
-#     "Rondônia": 1150344,
-#     "Roraima": 517096,
-#     "Santa Catarina": 7149955,
-#     "São Paulo": 46279763,
-#     "Sergipe": 2311197,
-#     "Tocantins": 1572094
-#   }
+#   "Acre": 860058,
+#   "Alagoas": 3204261,
+#   "Amapá": 846793,
+#   "Amazonas": 4278398,
+#   "Bahia": 14703894,
+#   "Ceará": 9187103,
+#   "Distrito Federal": 3045045,
+#   "Espírito Santo": 3967592,
+#   "Goiás": 7049185,
+#   "Maranhão": 7016274,
+#   "Mato Grosso": 3515000,
+#   "Mato Grosso do Sul": 3131851,
+#   "Minas Gerais": 21391370,
+#   "Pará": 8690722,
+#   "Paraíba": 4051637,
+#   "Paraná": 11474000,
+#   "Pernambuco": 9675773,
+#   "Piauí": 6576495,
+#   "Rio de Janeiro": 17425717,
+#   "Rio Grande do Norte": 3377573,
+#   "Rio Grande do Sul": 11365360,
+#   "Rondônia": 1163077,
+#   "Roraima": 517094,
+#   "Santa Catarina": 7149583,
+#   "São Paulo": 46278532,
+#   "Sergipe": 2251159,
+#   "Tocantins": 1572827
 # }
 # ```
 ```
@@ -279,30 +312,30 @@ The commands above produce results similar to this diagram:
 ```mermaid
 mindmap
   root("Chatnik")
-    "Purpose"
-      "Raku package"
-      "CLI for LLM personas"
-      "Persistent interaction via OS files"
-    "Features"
-      "Multiple LLM providers"
-      "LLM Prompts integration"
-      "OS shell access"
-    "LLM Access"
-      "Ollama"
-      "Llamafile"
-      "Service Providers"
-        "OpenAI"
-        "Gemini"
-        "MistralAI"
-    "Scripts"
-      "llm-chat"
-      "llm-chat-meta"
-        "List chats"
-        "Manage messages"
-        "Delete chats"
-    "Installation"
-      "Zef Ecosystem"
-      "GitHub"
+    Purpose
+      Raku package
+      CLI for LLM personas
+      Persistent interaction via OS files
+    Features
+      Multiple LLM providers
+      LLM Prompts integration
+      OS shell access
+    LLM Access
+      Ollama
+      Llamafile
+      Service Providers
+        OpenAI
+        Gemini
+        MistralAI
+    Scripts
+      llm-chat
+      llm-chat-meta
+        List chats
+        Manage messages
+        Delete chats
+    Installation
+      Zef Ecosystem
+      GitHub
 ```
 
 ### Render results Markdown with dedicated programs
@@ -314,8 +347,8 @@ cat README.md | llm-chat -i=th --prompt="$(llm-prompt ThinkingHatsFeedback 'the 
 ```
 
 **Remark:** By default the prompt "ThinkingHatsFeedback" gives the hat-feedback table in JSON format.
-(Currently) the prompt expansion does not handle named parameters, hence,
-`llm-prompt` is used to specify the Markdown format for that table.
+(Currently) the prompt expansion does not handle named parameters, hence, 
+`llm-prompt` is used to specify the Markdown format for that table.   
 
 Get the LLM (chat object) answer -- via `llm-chat-meta` -- put into a temporary file and "system open" that file:
 
@@ -323,8 +356,8 @@ Get the LLM (chat object) answer -- via `llm-chat-meta` -- put into a temporary 
 tmpfile="$TMPDIR/llmans.md"; llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
 ```
 
-The command above works on macOS. On Linux instead of using temporary dictory `--suffix` can be passed to `mktemp`.
-For example:
+The command above works on macOS. On Linux instead of explicitly creating a file in the temporary dictory,
+the argument `--suffix` can be passed to `mktemp`. For example:
 
 ```
 tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
@@ -499,7 +532,7 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Multi-word: `@words` & `*%args`
     - [X] DONE From pipeline
     - [X] CANCELED Format? 
-  - [ ] TODO CLI `llm-chat-meta`
+  - [X] DONE CLI `llm-chat-meta`
     - [X] DONE Commands reaction
     - [X] DONE View messages for an id
     - [X] DONE Clear messages for an id
@@ -509,7 +542,7 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Clear message for an id by range
     - [X] DONE Take message for an id by index
     - [X] DONE Take last message for an id
-    - [ ] TODO Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
+    - [X] DONE Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
 - [ ] TODO Unit tests
   - [X] DONE Export & import
   - [X] DONE Main workflow

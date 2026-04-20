@@ -405,7 +405,7 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Multi-word: `@words` & `*%args`
     - [X] DONE From pipeline
     - [X] CANCELED Format? 
-  - [ ] TODO CLI `llm-chat-meta`
+  - [X] DONE CLI `llm-chat-meta`
     - [X] DONE Commands reaction
     - [X] DONE View messages for an id
     - [X] DONE Clear messages for an id
@@ -415,7 +415,7 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Clear message for an id by range
     - [X] DONE Take message for an id by index
     - [X] DONE Take last message for an id
-    - [ ] TODO Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
+    - [X] DONE Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
 - [ ] TODO Unit tests
   - [X] DONE Export & import
   - [X] DONE Main workflow
