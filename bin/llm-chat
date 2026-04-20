@@ -30,10 +30,17 @@ multi sub MAIN(
     say $res;
 }
 
-#| Using multiple words as input
+#| Using multiple words as input.
 multi sub MAIN(
         *@words,   #= Multi-word input.
         *%args     #= LLM configuration named arguments.
                ) {
     MAIN(@words.join(' '), |%args)
+}
+
+#| Using shell pipeline value as input.
+multi sub MAIN(
+        *%args     #= LLM configuration named arguments.
+               ) {
+    MAIN(lines().join("\n"), |%args)
 }
