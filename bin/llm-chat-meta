@@ -25,13 +25,13 @@ sub cannot-find(Str:D $chat-id) {
 
 my %*SUB-MAIN-OPTS = :named-anywhere;
 
-# Very likely a separate USAGE definition has to done. For example:
+# Very likely a separate USAGE definition has to be done. For example:
 # Int:D :$n = -1,  #= For the commands "clear" and "messages" specifies the number of messages: positive number means first $n, negative last $n. Ignored with --all.
 # Ind:D :$index = -1, #= For the command "message" $n is a reference index.
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                #= Command, one of: card, clear, delete, file, list, message, messages.
+        Str:D $command,                #= Command, one of: card, clear, delete, file, last-message, list, message, messages.
         Str:D :i(:id(:$chat-id)) = '', #= Chat id; ignored if --all is specified.
         Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
         *%args,                        #= Additional, optional arguments for the commands: clear, message, messages.
@@ -102,6 +102,17 @@ multi sub MAIN(
                     say "$k : {to-json(%v)}" if $min ≤ $k ≤ $max
                 }
                 #say Chatnik::to-chat-object(%chats{$chat-id}).form.
+            } else {
+                cannot-find($chat-id)
+            }
+        }
+        when $_.lc ∈ <last-message lastmessage> && !$all {
+            if %chats{$chat-id}:exists {
+                if %chats{$chat-id}<messages> {
+                    say %chats{$chat-id}<messages>.tail
+                } else {
+                    say "The chat object $chat-id has no messages."
+                }
             } else {
                 cannot-find($chat-id)
             }
