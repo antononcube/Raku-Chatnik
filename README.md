@@ -310,24 +310,24 @@ mindmap
 Get feedback on a text with the prompt ["ThinkingHatsFeedback"](https://resources.wolframcloud.com/PromptRepository/resources/ThinkingHatsFeedback):
 
 ```
-cat README.md | llm-chat -i=th --prompt=$(llm-prompt ThinkingHatsFeedback --format=Markdown) --model=ollama::gemma4:26b 
+cat README.md | llm-chat -i=th --prompt="$(llm-prompt ThinkingHatsFeedback 'the TEXT is GIVEN BELOW.' --format=Markdown)" --model=ollama::gemma4:26b 
 ```
 
 **Remark:** By default the prompt "ThinkingHatsFeedback" gives the hat-feedback table in JSON format.
-(Currently) the prompt expansion does not handle named parameters, hence, 
-`llm-prompt` is used to specify the Markdown format for that table.   
+(Currently) the prompt expansion does not handle named parameters, hence,
+`llm-prompt` is used to specify the Markdown format for that table.
 
 Get the LLM (chat object) answer -- via `llm-chat-meta` -- put into a temporary file and "system open" that file:
 
 ```
-tmpfile="$TMPDIR/llmans.md"; llm-chat-meta -i=th message --index=-1 > "$tmpfile"; open "$tmpfile"
+tmpfile="$TMPDIR/llmans.md"; llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
 ```
 
 The command above works on macOS. On Linux instead of using temporary dictory `--suffix` can be passed to `mktemp`.
 For example:
 
 ```
-tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th message --index=-1 > "$tmpfile"; open "$tmpfile"
+tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
 ```
 
 -----
