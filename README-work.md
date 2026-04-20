@@ -400,11 +400,11 @@ because LLMs invocation is (much) slower in comparison.
   - [X] DONE Chats DB import 
   - [X] DONE LLM persona creation
   - [X] DONE LLM persona repeated interaction
-  - [ ] TODO CLI `llm-chat`
+  - [X] DONE CLI `llm-chat`
     - [X] DONE Simple: `$input` & `*%args`
     - [X] DONE Multi-word: `@words` & `*%args`
-    - [ ] TODO From pipeline
-    - [ ] TODO Format?
+    - [X] DONE From pipeline
+    - [X] CANCELED Format? 
   - [ ] TODO CLI `llm-chat-meta`
     - [X] DONE Commands reaction
     - [X] DONE View messages for an id
@@ -412,6 +412,9 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Delete chat for an id
     - [X] DONE View all chats
     - [X] DONE Delete all chats
+    - [X] DONE Clear message for an id by range
+    - [X] DONE Take message for an id by index
+    - [X] DONE Take last message for an id
     - [ ] TODO Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
 - [ ] TODO Unit tests
   - [X] DONE Export & import
@@ -422,6 +425,9 @@ because LLMs invocation is (much) slower in comparison.
 - [ ] TODO Documentation
   - [X] DONE Flowchart & sequence diagram
   - [X] DONE Usage examples
+    - [X] DONE Basic examples
+    - [X] DONE Advanced examples
+    - [X] DONE Management (meta) examples
   - [ ] TODO Demo video
 
 ----

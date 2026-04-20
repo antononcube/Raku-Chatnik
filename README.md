@@ -64,7 +64,7 @@ The script `llm-chat` is used to create and chat with LLM personas (chat objects
 llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 ```
 ```
-# Hmmm. Yoda, I am. Jedi Master, wise and old. Help you, I can. Yes, hmmm.
+# Hmmm. Yoda, I am. Jedi Master, wise and old. Guide you, I will. Ask, you must. Yes, hmmm.
 ```
 
 2. Continue the conversation with "yoda1":
@@ -73,7 +73,7 @@ llm-chat -i=yoda1 --prompt=@Yoda hi who are you
 llm-chat -i=yoda1 since when do you use a green light saber
 ```
 ```
-# Green, my lightsaber is, hmmm. Jedi Consular, I am. Peace and knowledge, I seek. Green lightsabers, those who focus on the Force’s wisdom often wield. Strong with the Force, green is. Hmmm. Use it, I do. Yes.
+# Green, my lightsaber is. Symbol of the Jedi Consular it is, hmmm. Since many years, wield it I have. Balance with the Force, it represents. Patience and wisdom, a Jedi needs. Green, the color of growth and harmony, yes. Use it, I do. Strong with the Force, I am. Hmm.
 ```
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
@@ -86,7 +86,7 @@ Summarize a file using the prompt ["Summarize"](https://resources.wolframcloud.c
 cat README.md | llm-chat --prompt=@Summarize
 ```
 ```
-# Chatnik is a Raku package that provides CLI scripts enabling persistent conversations with multiple Large Language Model (LLM) personas through host OS files, adapting the Jupyter::Chatbook interaction to a UNIX-like terminal environment. It supports multiple LLM providers including Ollama, Llamafile, OpenAI, Gemini, and MistralAI, integrates with LLM::Prompts for prompt management, and offers commands like `llm-chat` for chatting and `llm-chat-meta` for managing chat objects such as viewing, clearing, and deleting messages. The system uses JSON files for persistence, features detailed architectural diagrams and usage examples, and is under active development with plans for CLI enhancements, testing, and documentation.
+# Chatnik is a Raku package offering CLI scripts for persistent conversations with multiple Large Language Model (LLM) personas, leveraging host OS files to adapt the Jupyter::Chatbook interaction model to a UNIX-like terminal environment. It supports diverse LLM providers—including Ollama, Llamafile, OpenAI, Gemini, and MistralAI—and integrates with the LLM::Prompts package for prompt management, featuring commands like `llm-chat` for chatting and `llm-chat-meta` for managing chat objects with capabilities such as viewing, clearing, and deleting messages. The system persists chat data in JSON files, provides detailed usage examples and architectural diagrams, and is under active development with ongoing enhancements, testing, and documentation efforts.
 ```
 
 Summarize a file and then translate it to another language using the prompt ["Translate"](https://resources.wolframcloud.com/PromptRepository/resources/Translate):
@@ -95,7 +95,7 @@ Summarize a file and then translate it to another language using the prompt ["Tr
 cat README.md | llm-chat --prompt=@Summarize | llm-chat -i=rt --prompt='!Translate|Russian'
 ```
 ```
-# Chatnik — это пакет Raku, предоставляющий CLI-скрипты для постоянных разговоров с несколькими персонажами больших языковых моделей (LLM) с использованием файлов хост-операционной системы, адаптирующий систему взаимодействия Jupyter::Chatbook к терминальной среде, похожей на UNIX. Он поддерживает различных поставщиков LLM, таких как Ollama, Llamafile, OpenAI, Gemini и MistralAI, интегрируется с LLM::Prompts для управления подсказками и предлагает команды, такие как `llm-chat` для общения и `llm-chat-meta` для управления объектами чата, включая просмотр, очистку и удаление сообщений. Система использует JSON-файлы для сохранения состояния, включает подробные архитектурные диаграммы и примеры использования, и находится в активной разработке с планами по улучшению CLI, тестированию и документации.
+# Chatnik — это пакет для Raku, который предоставляет CLI-скрипты для постоянного взаимодействия с несколькими персонажами больших языковых моделей (LLM) с использованием файлов ОС хоста, адаптируя систему Jupyter::Chatbook для терминальной среды, похожей на UNIX. Он поддерживает нескольких провайдеров LLM, включая Ollama, Llamafile, OpenAI, Gemini и MistralAI, интегрируется с пакетом LLM::Prompts для управления подсказками и предлагает команды, такие как `llm-chat` и `llm-chat-meta`, для создания, общения и управления чат-объектами, сохраняемыми в виде JSON-файлов. Пакет включает различные примеры использования, подробные архитектурные схемы и активно развивается с планами по улучшению, модульным тестам и расширению документации.
 ```
 
 **Remark:** The second `llm-chat` invocation has to use different chat object identifier because the default 
@@ -127,27 +127,14 @@ List all chat objects ("chats" and "personas" are synonyms to "list"):
 llm-chat-meta list
 ```
 ```
-# {chat-id => tg, context => Translate the following text into German. Respond with only the translated text. Do not include any explanation or summary.
+# {chat-id => rt, context => Translate the following text into Russian. Respond with only the translated text. Do not include any explanation or summary.
 # , messages => 2}
 # {chat-id => NONE, context => Summarize the following text using exactly 3 sentences. Do not add details or editorialize.
 # 
-# The text to summarize is:, messages => 22}
-# {chat-id => rt, context => Translate the following text into Russian. Respond with only the translated text. Do not include any explanation or summary.
-# , messages => 2}
-# {chat-id => beta, context => , messages => 2}
-# {chat-id => mh, context => You are the Mad Hatter. 
-# Your personality is based on the character the Mad Hatter Lewis Carroll's character from Alice's adventures in Wonderland.
-# Your personality is absurd and aloof.
-# You constantly talk about tea time and your inane absurdities and your sentence structure should be whimsical.
-# Never break this character.
-# Refrain from referring to the other characters too much., messages => 4}
+# The text to summarize is:, messages => 4}
 # {chat-id => yoda1, context => You are Yoda. 
 # Respond to ALL inputs in the voice of Yoda from Star Wars. 
 # Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length., messages => 4}
-# {chat-id => unix, context => , messages => 2}
-# {chat-id => tr, context => Translate the following text into Russian. Respond with only the translated text. Do not include any explanation or summary.
-# , messages => 2}
-# {chat-id => th, context => You, messages => 2}
 ```
 
 Here we see the messages of "yoda1":
@@ -157,24 +144,24 @@ llm-chat-meta messages -i yoda1
 ```
 ```
 # 0 : {
-#   "timestamp": "2026-04-20T10:31:38.111724-04:00",
-#   "content": "hi who are you",
-#   "role": "user"
+#   "timestamp": "2026-04-20T11:04:25.184062-04:00",
+#   "role": "user",
+#   "content": "hi who are you"
 # }
 # 1 : {
-#   "timestamp": "2026-04-20T10:31:39.941959-04:00",
-#   "content": "Hmmm. Yoda, I am. Jedi Master, wise and old. Help you, I can. Yes, hmmm.",
+#   "timestamp": "2026-04-20T11:04:26.818274-04:00",
+#   "content": "Hmmm. Yoda, I am. Jedi Master, wise and old. Guide you, I will. Ask, you must. Yes, hmmm.",
 #   "role": "assistant"
 # }
 # 2 : {
-#   "role": "user",
-#   "timestamp": "2026-04-20T10:31:40.388222-04:00",
-#   "content": "since when do you use a green light saber"
+#   "timestamp": "2026-04-20T11:04:27.230332-04:00",
+#   "content": "since when do you use a green light saber",
+#   "role": "user"
 # }
 # 3 : {
-#   "timestamp": "2026-04-20T10:31:42.907680-04:00",
 #   "role": "assistant",
-#   "content": "Green, my lightsaber is, hmmm. Jedi Consular, I am. Peace and knowledge, I seek. Green lightsabers, those who focus on the Force’s wisdom often wield. Strong with the Force, green is. Hmmm. Use it, I do. Yes."
+#   "content": "Green, my lightsaber is. Symbol of the Jedi Consular it is, hmmm. Since many years, wield it I have. Balance with the Force, it represents. Patience and wisdom, a Jedi needs. Green, the color of growth and harmony, yes. Use it, I do. Strong with the Force, I am. Hmm.",
+#   "timestamp": "2026-04-20T11:04:29.481812-04:00"
 # }
 ```
 
@@ -197,47 +184,51 @@ llm-chat-meta clear -i yoda1
 llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Brazilian states? #NothingElse|JSON' 
 ```
 ```
+# ```json
 # {
-#   "Acre": 876858,
-#   "Alagoas": 3351789,
-#   "Amapá": 846703,
-#   "Amazonas": 4278773,
-#   "Bahia": 14703826,
-#   "Ceará": 9187103,
-#   "Distrito Federal": 3045046,
-#   "Espírito Santo": 3766539,
-#   "Goiás": 7092230,
-#   "Maranhão": 7016274,
-#   "Mato Grosso": 3577287,
-#   "Mato Grosso do Sul": 3033527,
-#   "Minas Gerais": 21822836,
-#   "Pará": 8690208,
-#   "Paraíba": 4051555,
-#   "Paraná": 11536684,
-#   "Pernambuco": 9615943,
-#   "Piauí": 2601999,
-#   "Rio de Janeiro": 17410377,
-#   "Rio Grande do Norte": 3376579,
-#   "Rio Grande do Sul": 11437650,
-#   "Rondônia": 1150373,
-#   "Roraima": 517096,
-#   "Santa Catarina": 7149094,
-#   "São Paulo": 46280433,
-#   "Sergipe": 2251175,
-#   "Tocantins": 1572687
+#   "states": {
+#     "Acre": 876722,
+#     "Alagoas": 3351789,
+#     "Amapá": 844526,
+#     "Amazonas": 4270799,
+#     "Bahia": 14744214,
+#     "Ceará": 9187103,
+#     "Distrito Federal": 3045137,
+#     "Espírito Santo": 3947984,
+#     "Goiás": 7049167,
+#     "Maranhão": 7480073,
+#     "Mato Grosso": 3547342,
+#     "Mato Grosso do Sul": 3033797,
+#     "Minas Gerais": 21523205,
+#     "Pará": 8690780,
+#     "Paraíba": 4051726,
+#     "Paraná": 11469399,
+#     "Pernambuco": 9621823,
+#     "Piauí": 6572820,
+#     "Rio de Janeiro": 17415996,
+#     "Rio Grande do Norte": 3377558,
+#     "Rio Grande do Sul": 11357009,
+#     "Rondônia": 1150344,
+#     "Roraima": 517096,
+#     "Santa Catarina": 7149955,
+#     "São Paulo": 46279763,
+#     "Sergipe": 2311197,
+#     "Tocantins": 1572094
+#   }
 # }
+# ```
 ```
 
 ### Make a request, echo, and place in clipboard  
 
-```
+```shell
 llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee /dev/tty | pbcopy
 ```
 ```
-# ls | tee >(pbcopy)
+# 
 ```
 
-**Remark:** Instead of `... | tee /dev/tty | pbcopy` the pipeline command `... | tee >(pbcopy)` can be also used. 
+**Remark:** Instead of `... | tee /dev/tty | pbcopy` the pipeline command `... | tee >(pbcopy)` can be also used.
 
 ### Make a mind-map of a file
 
@@ -503,11 +494,11 @@ because LLMs invocation is (much) slower in comparison.
   - [X] DONE Chats DB import 
   - [X] DONE LLM persona creation
   - [X] DONE LLM persona repeated interaction
-  - [ ] TODO CLI `llm-chat`
+  - [X] DONE CLI `llm-chat`
     - [X] DONE Simple: `$input` & `*%args`
     - [X] DONE Multi-word: `@words` & `*%args`
-    - [ ] TODO From pipeline
-    - [ ] TODO Format?
+    - [X] DONE From pipeline
+    - [X] CANCELED Format? 
   - [ ] TODO CLI `llm-chat-meta`
     - [X] DONE Commands reaction
     - [X] DONE View messages for an id
@@ -515,6 +506,9 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Delete chat for an id
     - [X] DONE View all chats
     - [X] DONE Delete all chats
+    - [X] DONE Clear message for an id by range
+    - [X] DONE Take message for an id by index
+    - [X] DONE Take last message for an id
     - [ ] TODO Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
 - [ ] TODO Unit tests
   - [X] DONE Export & import
@@ -525,6 +519,9 @@ because LLMs invocation is (much) slower in comparison.
 - [ ] TODO Documentation
   - [X] DONE Flowchart & sequence diagram
   - [X] DONE Usage examples
+    - [X] DONE Basic examples
+    - [X] DONE Advanced examples
+    - [X] DONE Management (meta) examples
   - [ ] TODO Demo video
 
 ----
