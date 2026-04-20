@@ -168,4 +168,45 @@ our sub evaluate-message(Str:D $input, %chats, *%args) {
     %chats{$chat-id} = $chatObj;
 
     return $res;
-} 
+}
+
+#==========================================================
+# Load predefined LLM-personas
+#==========================================================
+
+#| Load LLM personas defined in JSON file.
+our proto sub load-llm-personas(|--> Map:D) {*}
+
+# This sub is almost the same as method get-user-llm-personas(--> Map:D) of unit class Jupyter::Chatbook::Magics
+# of "Jupyter::Chatbook".
+multi sub load-llm-personas(--> Map:D) {
+    my $base = %*ENV<XDG_HOME> // $*HOME.child('.config');
+    $base = $base.child('raku-chatbook') // $*HOME.child('.config');
+    my $conf-file = %*ENV<RAKU_CHATBOOK_LLM_PERSONAS_CONF> // $base.child('llm-personas.json');
+    return load-llm-personas($conf-file);
+}
+
+multi sub load-llm-personas($conf-file where $conf-file ~~ (Str:D | IO::Path:D)--> Map:D) {
+    if $conf-file.IO.e {
+        #debug "Reading configuration from $conf-file";
+        try {
+            my @specs = |from-json($conf-file.IO.slurp);
+            if @specs ~~ (List:D | Array:D | Seq:D) && @specs.all ~~ Map:D {
+                # Merge magic arguments with defaults
+                my %personas = do for @specs.kv -> $i, %p {
+                    # Merge with defaults
+                    my %h = %(conf => 'ChatGPT', chat-id => "p$i" ), %p;
+                    # Expand prompt
+                    if %h<prompt>:exists {
+                        %h<prompt> = llm-prompt-expand(%h<prompt>)
+                    }
+                    # Make a chat object
+                    %h<chat-id> => llm-chat(|%h);
+                }
+                return %personas;
+            }
+        }
+    }
+    note "Cannot find the file $conf-file.";
+    return %();
+}

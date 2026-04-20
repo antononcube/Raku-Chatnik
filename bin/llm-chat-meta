@@ -31,7 +31,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                #= Command, one of: card, clear, delete, file, last-message, list, message, messages.
+        Str:D $command,                #= Command, one of: card, clear, delete, file, last-message, list, load-llm-personas, message, messages.
         Str:D :i(:id(:$chat-id)) = '', #= Chat id; ignored if --all is specified.
         Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
         *%args,                        #= Additional, optional arguments for the commands: clear, message, messages.
@@ -47,6 +47,21 @@ multi sub MAIN(
             $simple = True;
             Chatnik::export-chats({});
             say 'Deleted all chats objects.'
+        }
+        when $_.lc ∈ <load-llm-personas load-personas> {
+            $simple = True;
+            my %chats;
+            if Chatnik::get-chat-objects-file-name.IO.f {
+                %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+            }
+            my %predefined-chats = Chatnik::load-llm-personas;
+            my @common-ids = (%chats.keys (&) %predefined-chats.keys).keys;
+            if @common-ids {
+                note "Overwriting chat objects with identifiers: <{@common-ids.sort.join(' ')}>.";
+            }
+            %chats = %chats , %predefined-chats;
+            Chatnik::export-chats(%chats);
+            say "Ingested {%predefined-chats.elems} chat objects with identifiers: <{%predefined-chats.keys.sort.join(' ')}>."
         }
     }
 
