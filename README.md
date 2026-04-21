@@ -221,11 +221,11 @@ llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Bra
 
 ### Make a request, echo, and place in clipboard  
 
-```shell
+```
 llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee /dev/tty | pbcopy
 ```
 ```
-# 
+#  ls | tee >(pbcopy) 
 ```
 
 **Remark:** Instead of `... | tee /dev/tty | pbcopy` the pipeline command `... | tee >(pbcopy)` can be also used.
