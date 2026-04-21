@@ -1,5 +1,16 @@
 Revision history of the Raku package "Chatnik"
 
+0.0.4 2026-04-21
+    - Documentation improvements and more advanced examples.
+    - Loading predefined personas -- as in "Jupyter::Chatbook".
+    - Commands "last-message" and "load-llm-personas" for `llm-chat-meta`.
+
+0.0.3 2026-04-20
+    - Added new functionalities for `llm-chat-meta`:
+        - clearing of messages and taking of messages for a specified range
+        - chat object card (formatted table) print out
+        - command "message" and "--index" argument
+
 0.0.2 2026-04-18
     - More comprehensive documentation (in the README.)
     - Minor bug fixes.
