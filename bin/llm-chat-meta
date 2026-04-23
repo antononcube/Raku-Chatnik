@@ -31,7 +31,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                #= Command, one of: card, clear, delete, file, last-message, list, load-llm-personas, message, messages.
+        Str:D $command,                #= Command, one of: card, clear, delete, file, first-message, last-message, list, load-llm-personas, message, messages.
         Str:D :i(:id(:$chat-id)) = '', #= Chat id; ignored if --all is specified.
         Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
         *%args,                        #= Additional, optional arguments for the commands: clear, message, messages.
@@ -121,10 +121,10 @@ multi sub MAIN(
                 cannot-find($chat-id)
             }
         }
-        when $_.lc ∈ <last-message lastmessage> && !$all {
+        when $_.lc ∈ <first-message firstmessage last-message lastmessage> && !$all {
             if %chats{$chat-id}:exists {
                 if %chats{$chat-id}<messages> {
-                    my $m = %chats{$chat-id}<messages>.tail;
+                    my $m = $_ ~~ /^ first / ?? %chats{$chat-id}<messages>.head !! %chats{$chat-id}<messages>.tail;
                     say $m<content> // $m;
                 } else {
                     say "The chat object $chat-id has no messages."
