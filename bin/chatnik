@@ -1,0 +1,20 @@
+#!/usr/bin/env raku
+use v6.d;
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+#| Chat with persistent LLM-chat objects.
+multi sub MAIN(Str:D $input, *%args) {
+    my @cmd = ('llm-chat', $input, |@*ARGS);
+    my $proc = run(@cmd):out:err;
+    note $proc.err.slurp(:close);
+    $proc.out.slurp(:close).say;
+}
+
+#| Meta processing of persistent LLM-chat objects.
+multi sub MAIN('meta', Str:D $command, *%args) {
+    my @cmd = ('llm-chat-meta', |@*ARGS).grep(* ne 'meta');
+    my $proc = run(@cmd):out:err;
+    note $proc.err.slurp(:close);
+    $proc.out.slurp(:close).say;
+}
