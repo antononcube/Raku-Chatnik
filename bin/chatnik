@@ -2,14 +2,35 @@
 use v6.d;
 
 my %*SUB-MAIN-OPTS = :named-anywhere;
-
 #| Chat with persistent LLM-chat objects.
-multi sub MAIN(Str:D $input, *%args) {
+multi sub MAIN(
+        Str:D $input, #= Chat input text.
+        *%args,       #= LLM configuration named arguments.
+               ) {
     my @cmd = ('llm-chat', $input, |@*ARGS);
     my $proc = run(@cmd):out:err;
     note $proc.err.slurp(:close);
     $proc.out.slurp(:close).say;
 }
+
+#| Using multiple words as input.
+multi sub MAIN(
+        *@words,   #= Multi-word input.
+        *%args     #= LLM configuration named arguments.
+               ) {
+    MAIN(@words.join(' '), |%args)
+}
+
+#| Using shell pipeline value as input.
+multi sub MAIN(
+        *%args     #= LLM configuration named arguments.
+               ) {
+    MAIN(lines().join("\n"), |%args)
+}
+
+#-----------------------------------------------------------
+# Meta call
+#-----------------------------------------------------------
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN('meta', Str:D $command, *%args) {
