@@ -1,11 +1,28 @@
 #!/usr/bin/env raku
 use v6.d;
 
+#-----------------------------------------------------------
+# Meta call herper
+#-----------------------------------------------------------
+sub meta-call(*@args) {
+    # @args.tail(*-1) is more tighter and more "self documenting" than grep(* ne 'meta');
+    # my @cmd = ('llm-chat-meta', |@args).grep(* ne 'meta');
+    my @cmd = ('llm-chat-meta', |@args.tail(*-1));
+    my $proc = run(@cmd):out:err;
+    note $proc.err.slurp(:close);
+    $proc.out.slurp(:close).say;
+}
+
+#-----------------------------------------------------------
+# Chat call
+#-----------------------------------------------------------
+
 my %*SUB-MAIN-OPTS = :named-anywhere;
+
 #| Chat with persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $input, #= Chat input text.
-        *%args,       #= LLM configuration named arguments.
+        Str:D $input where * ne 'meta', #= Chat input text.
+        *%args,                         #= LLM configuration named arguments.
                ) {
     my @cmd = ('llm-chat', $input, |@*ARGS);
     my $proc = run(@cmd):out:err;
@@ -18,14 +35,26 @@ multi sub MAIN(
         *@words,   #= Multi-word input.
         *%args     #= LLM configuration named arguments.
                ) {
-    MAIN(@words.join(' '), |%args)
+    if @words && @words.head eq 'meta' && @words.elems ≤ 2 {
+        if @words.elems == 1 && (%args<help> // False) {
+            USAGE()
+        } else {
+            meta-call(@*ARGS)
+        }
+    } else {
+        MAIN(@words.join(' '), |%args)
+    }
 }
 
 #| Using shell pipeline value as input.
 multi sub MAIN(
         *%args     #= LLM configuration named arguments.
                ) {
-    MAIN(lines().join("\n"), |%args)
+    if %args<help> // False {
+        USAGE()
+    } else {
+        MAIN(lines().join("\n"), |%args)
+    }
 }
 
 #-----------------------------------------------------------
@@ -34,8 +63,28 @@ multi sub MAIN(
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN('meta', Str:D $command, *%args) {
-    my @cmd = ('llm-chat-meta', |@*ARGS).grep(* ne 'meta');
+    meta-call(|@*ARGS)
+}
+
+#-----------------------------------------------------------
+# Meta call
+#-----------------------------------------------------------
+
+sub USAGE() {
+    say "Chat with persistent LLM-chat objects.";
+    say $*USAGE.subst(/\S+ chatnik \S*/, 'chatnik'):g;
+    say "\n";
+    my $usage = q:to/EOH/;
+        --model          Model spec in the form "ollama::gpt-oss:20b" or "gpt-5.3"; the latter is the same as "chatgpt::gpt-5.3".
+        --prompt         Prompt for the LLM; prompt DSL expansion is applied.
+        --<args>=...     Arguments for &llm-configuration of "LLM::Functions".
+    EOH
+    say "chatnik named arguments:\n$usage";
+
+    my @cmd = ('llm-chat-meta', '--help');
     my $proc = run(@cmd):out:err;
-    note $proc.err.slurp(:close);
-    $proc.out.slurp(:close).say;
+    $usage = $proc.out.slurp(:close);
+
+    say "chatnik meta arguments:\n{$usage.lines().tail(*-4).join("\n")}";
+
 }
