@@ -46,7 +46,7 @@ multi sub MAIN(
         when $_.lc ∈ <delete drop> && $all {
             $simple = True;
             Chatnik::export-chats({});
-            say 'Deleted all chats objects.'
+            say 'Deleted all chat objects.'
         }
         when $_.lc ∈ <load-llm-personas load-personas> {
             $simple = True;
