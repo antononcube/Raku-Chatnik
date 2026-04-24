@@ -31,10 +31,10 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                #= Command, one of: card, clear, delete, file, first-message, last-message, list, load-llm-personas, message, messages.
-        Str:D :i(:id(:$chat-id)) = '', #= Chat id; ignored if --all is specified.
-        Bool:D :$all = False,          #= Whether to apply the command to all chat objects or not.
-        *%args,                        #= Additional, optional arguments for the commands: clear, message, messages.
+        Str:D $command,                    #= Command, one of: card, clear, delete, file, first-message, last-message, list, load-llm-personas, message, messages.
+        Str:D :i(:id(:$chat-id)) = 'NONE', #= Chat id; ignored if --all is specified.
+        Bool:D :$all = False,              #= Whether to apply the command to all chat objects or not.
+        *%args,                            #= Additional, optional arguments for the commands: clear, message, messages.
          ) {
 
     my $simple = False;
