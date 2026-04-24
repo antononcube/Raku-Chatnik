@@ -78,6 +78,8 @@ llm-chat -i=yoda1 since when do you use a green light saber
 
 **Remark:** The message input for `llm-chat` can be given in quotes. For example: `llm-chat 'Hi, again!' -i=yoda1`.
 
+**Remark:** The script `chatnik` can be used instead of `llm-chat`.
+
 ### Apply prompt(s) to shell pipeline output
 
 Summarize a file using the prompt ["Summarize"](https://resources.wolframcloud.com/PromptRepository/resources/Summarize):
@@ -173,6 +175,9 @@ llm-chat-meta clear -i yoda1
 ```
 # Cleared the messages of chat object yoda1.
 ```
+
+**Remark:** Calling the script `chatnik` with the command `meta` has the same effect as `llm-chat-meta`.
+For example, `chatnik meta clear -i yoda1` can be used instead of the previous command.
 
 -----
 
