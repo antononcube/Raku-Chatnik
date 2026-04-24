@@ -4,17 +4,21 @@ Raku package that provides Command Line Interface (CLI) scripts for conversing w
 
 "Chatnik" uses files of the host Operating System (OS) to maintain persistent interaction with multiple LLM chat objects.
 
-"Chatnik" simply moves the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook), [AAp3], 
-into a UNIX-like OS terminal interaction.
-(I.e. an OS shell is used instead of a Jupyter notebook.) 
+"Chatnik" can be seen as a package that "moves" the LLM-chat objects interaction system of the Raku package ["Jupyter::Chatbook"](https://github.com/antononcube/Raku-Jupyter-Chatbook), [AAp3],
+into typical OS shell interaction.
+(I.e. an OS shell is used instead of a Jupyter notebook.)
 
 There are several consequences of this approach:
 
-- Multiple LLMs and LLM provider can be used
+- Multiple LLMs and LLM providers can be used
 - The chat messages can use the provided by the package ["LLM::Prompts"](https://github.com/antononcube/Raku-LLM-Prompts), [AAp2]:
   - Prompts collection
   - Prompt spec DSL and related prompt expansion
-- Easy access to OS shell functionalities 
+- Easy access to OS shell functionalities
+
+**Remark:** The package ["LLM::DWIM"](https://raku.land/zef:bduggan/LLM::DWIM), [BDp1], is very similar in spirit to "Chatnik".
+"LLM::DWIM" does not use prompt expansion, uses only one chat object, and, although it saves chat history, it does not create chat objects with that history.
+Both packages are based on the LLM packages "LLM::Functions", [AAp1], and "LLM::Prompts", [AAp2].
 
 ----
 
@@ -549,6 +553,11 @@ because LLMs invocation is (much) slower in comparison.
 [Jupyter::Chatbook, Raku package](https://github.com/antononcube/Raku-Jupyter-Chatbook),
 (2023-2026),
 [GitHub/antononcube](https://github.com/antononcube).
+
+[BDp1] Brian Duggan,
+[LLM::DWIM, Raku package](https://github.com/bduggan/raku-llm-dwim),
+(2024-2025),
+[GitHub/bduggan](https://github.com/bduggan).
 
 [JSp1] Jonathan Stowe,
 [XDG::BaseDirectory, Raku package](https://github.com/jonathanstowe/XDG-BaseDirectory),
