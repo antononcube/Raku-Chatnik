@@ -448,17 +448,17 @@ because LLMs invocation is (much) slower in comparison.
 
 ### Packages
 
-[AAp1] Anton Antonov
+[AAp1] Anton Antonov,
 [LLM::Functions, Raku package](https://github.com/antononcube/Raku-LLM-Functions),
 (2023-2026),
 [GitHub/antononcube](https://github.com/antononcube).
 
-[AAp2] Anton Antonov
+[AAp2] Anton Antonov,
 [LLM::Prompts, Raku package](https://github.com/antononcube/Raku-LLM-Prompts),
 (2023-2025),
 [GitHub/antononcube](https://github.com/antononcube).
 
-[AAp3] Anton Antonov
+[AAp3] Anton Antonov,
 [Jupyter::Chatbook, Raku package](https://github.com/antononcube/Raku-Jupyter-Chatbook),
 (2023-2026),
 [GitHub/antononcube](https://github.com/antononcube).
