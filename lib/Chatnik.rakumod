@@ -219,10 +219,11 @@ multi sub load-llm-personas($conf-file where $conf-file ~~ (Str:D | IO::Path:D)-
                     my $conf = 'ChatGPT';
                     if %*ENV<CHATNIK_DEFAULT_MODEL> {
                         my %spec = get-provider-and-model(%*ENV<CHATNIK_DEFAULT_MODEL>);
-                        my $conf = llm-configuration(|%spec);
+                        $conf = llm-configuration(%spec<name>, model => %spec<model>);
                     }
                     my %default = :$conf, chat-id => "p$i";
                     my %h = %default, %p;
+
                     # Expand prompt
                     if %h<prompt>:exists {
                         %h<prompt> = llm-prompt-expand(%h<prompt>)
@@ -232,6 +233,9 @@ multi sub load-llm-personas($conf-file where $conf-file ~~ (Str:D | IO::Path:D)-
                 }
                 return %personas;
             }
+        }
+        if $! {
+            warn "LLM persona file ingestion failed with:\n{$!.Str}";
         }
     }
     note "Cannot find the file $conf-file.";
