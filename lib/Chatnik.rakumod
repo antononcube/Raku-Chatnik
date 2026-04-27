@@ -114,7 +114,7 @@ our sub llm-configuration-by-args(*%args) {
 
     # Warn about unexpected options
     if %args.elems > %confArgs.elems {
-        # <i id chat-id conf prompt> are hanled in &evaluate-message
+        # <i id chat-id conf prompt> are handled in &evaluate-message
         my @unknown = %args.grep({ $_.key ∉ @knownParamNames && $_.key ∉ <i id chat-id conf prompt> })>>.key;
         note "Unknown LLM configuration option{@unknown.elems > 1 ?? 's' !! ''}: '{@unknown.join(', ')}'." if @unknown
     }
