@@ -1,5 +1,9 @@
 Revision history of the Raku package "Chatnik"
 
+0.0.6 2026-04-27
+    - Handling of env specified default model and LLM personas configuration file.
+    - Warning when unknown configration options are specified.
+
 0.0.5 2026-04-24
     - Implemented the CLI chatnik that redirects to llm-chat and llm-chat-meta.
     - Added "first-message" command for llm-chat-meta.
