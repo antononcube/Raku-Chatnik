@@ -78,8 +78,13 @@ multi sub MAIN(
         when $_.lc ∈ <list personas chats chat-objects chatobjects> {
 
             if %chats {
-                for %chats.kv -> $k, %v {
-                    say {chat-id => $k, context => %v<llm-evaluator><context>, messages => %v<messages>.elems}
+                my @ds = do for %chats.kv -> $k, %v {
+                    %(chat-id => $k, context => %v<llm-evaluator><context>, messages => %v<messages>.elems, llm-configuration => %v<llm-evaluator><conf>.Hash.grep(*.key ∈ <name model>).Hash)
+                }
+                if %args<format> && %args<format>.Str.lc eq 'json' {
+                    say to-json(@ds)
+                } else {
+                    .say for @ds
                 }
             } else {
                 say 'No chat objects.'
