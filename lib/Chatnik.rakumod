@@ -90,6 +90,21 @@ our sub import-chats() {
 # LLM configuration by any args
 #==========================================================
 
+our sub get-provider-and-model(Str:D $spec) {
+    if $spec.contains('::') {
+        my ($provider, $model) = $spec.split('::');
+        # Provider names are different than the model families.
+        $provider = do given $provider {
+            when 'openai' { 'chatgpt' }
+            when 'google' { 'gemini' }
+            default { $_ }
+        }
+
+        return %(name => $provider, :$model);
+    }
+    return %(name => 'ChatGPT', model => $spec);
+}
+
 our sub llm-configuration-by-args(*%args) {
     # Find known &llm-configuration parameters by class attributes
     my @knownParamNames = LLM::Functions::Configuration.^attributes.map(*.name)».subst(/ <[$@%&]> <[!.]>? /).sort;
@@ -97,17 +112,23 @@ our sub llm-configuration-by-args(*%args) {
     # Filter
     my %confArgs = %args.grep({ $_.key ∈ @knownParamNames });
 
+    # Warn about unexpected options
+    if %args.elems > %confArgs.elems {
+        # <i id chat-id conf prompt> are hanled in &evaluate-message
+        my @unknown = %args.grep({ $_.key ∉ @knownParamNames && $_.key ∉ <i id chat-id conf prompt> })>>.key;
+        note "Unknown LLM configuration option{@unknown.elems > 1 ?? 's' !! ''}: '{@unknown.join(', ')}'." if @unknown
+    }
+
+    # Default model
+    if !%confArgs<model>.defined && %*ENV<CHATNIK_DEFAULT_MODEL> {
+        %confArgs<model> = %*ENV<CHATNIK_DEFAULT_MODEL>
+    }
+
     # Process provide::model shortcut spec
-    if %confArgs<model> && %confArgs<model>.contains('::') {
-        my ($provider, $model) = %confArgs<model>.split('::');
-        # Provider names are different than the model families.
-        $provider = do given $provider {
-            when 'openai' { 'chatgpt' }
-            when 'google' { 'gemini' }
-            default { $_ }
-        }
-        %confArgs<model> = $model;
-        %confArgs<name> = $provider
+    if %confArgs<model> {
+        my %spec = get-provider-and-model(%confArgs<model>);
+        %confArgs<model> = %spec<model>;
+        %confArgs<name> = %spec<name>;
     }
 
     # Make the LLM configuration
@@ -182,7 +203,7 @@ our proto sub load-llm-personas(|--> Map:D) {*}
 multi sub load-llm-personas(--> Map:D) {
     my $base = %*ENV<XDG_HOME> // $*HOME.child('.config');
     $base = $base.child('raku-chatbook') // $*HOME.child('.config');
-    my $conf-file = %*ENV<RAKU_CHATBOOK_LLM_PERSONAS_CONF> // $base.child('llm-personas.json');
+    my $conf-file = %*ENV<CHATNIK_LLM_PERSONAS_CONF> // %*ENV<RAKU_CHATBOOK_LLM_PERSONAS_CONF> // $base.child('llm-personas.json');
     return load-llm-personas($conf-file);
 }
 
@@ -195,7 +216,13 @@ multi sub load-llm-personas($conf-file where $conf-file ~~ (Str:D | IO::Path:D)-
                 # Merge magic arguments with defaults
                 my %personas = do for @specs.kv -> $i, %p {
                     # Merge with defaults
-                    my %h = %(conf => 'ChatGPT', chat-id => "p$i" ), %p;
+                    my $conf = 'ChatGPT';
+                    if %*ENV<CHATNIK_DEFAULT_MODEL> {
+                        my %spec = get-provider-and-model(%*ENV<CHATNIK_DEFAULT_MODEL>);
+                        my $conf = llm-configuration(|%spec);
+                    }
+                    my %default = :$conf, chat-id => "p$i";
+                    my %h = %default, %p;
                     # Expand prompt
                     if %h<prompt>:exists {
                         %h<prompt> = llm-prompt-expand(%h<prompt>)
