@@ -250,6 +250,48 @@ tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th last-message > "$tmpfile";
 
 -----
 
+## Customization
+
+### Default model
+
+Default model can be specified with the env variable `CHATNIK_DEFAULT_MODEL`. For example:
+
+```
+export CHATNIK_DEFAULT_MODEL=ollama::gemma4:26b
+```
+
+Remove with `unset CHATNIK_DEFAULT_MODEL`. 
+
+### Pre-defined LLM personas
+
+Use defined LLM personas are specified with JSON file with a content like this:
+
+```json
+[
+    {
+	"chat-id": "raku",
+	"conf": "ChatGPT",
+	"prompt": "@CodeWriterX|Raku",
+	"model": "gpt-4o",
+	"max-tokens": 4096,
+	"temperature": 0.4
+    }
+]
+```
+
+(See such a file [here](https://github.com/antononcube/Raku-Jupyter-Chatbook/blob/master/resources/llm-personas.json).)
+
+The LLM personas JSON file can be specified with the OS environmental variables 
+`CHATNIK_LLM_PERSONAS_CONF` or `RAKU_CHATBOOK_LLM_PERSONAS_CONF` -- the former has precedence over the latter. 
+
+To load the predefined LLM personas use the command:
+
+```
+llm-chat-meta load-llm-personas
+```
+
+-----
+
 ## Implementation details
 
 ### Architectural design
