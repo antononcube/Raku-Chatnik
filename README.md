@@ -561,6 +561,13 @@ because LLMs invocation is (much) slower in comparison.
     - [X] DONE Take message for an id by index
     - [X] DONE Take last message for an id
     - [X] DONE Load LLM personas in the JSON file used for initialization by "Jupyter::Chatbook"
+  - [ ] TODO Handling images
+    - [ ] TODO Handle image path specified with the option `--image`
+    - [ ] TODO Recognizing the input is or has an image file path
+    - [ ] TODO Handle output of image generation models
+    - [ ] TODO Use cases:
+      - [ ] TODO Extract and translate textual content of an image
+      - [ ] TODO Make another image from a given image
 - [ ] TODO Unit tests
   - [X] DONE Export & import
   - [X] DONE Main workflow
