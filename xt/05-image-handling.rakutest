@@ -1,0 +1,23 @@
+use v6.d;
+
+use Chatnik;
+use LLM::Prompts;
+use LLM::Functions;
+use JSON::Fast;
+
+use Test;
+
+my %chats;
+
+## 1
+my $msg = 'Make an image of the climate activist Red Rebel Brigade having a silent protest a bridge.';
+ok Chatnik::evaluate-message($msg, %chats, chat-id => 'img1', model => 'ChatGPT::gpt-5.5');
+
+## 2
+# Ollama models like 'x/z-image-turbo:bf16' are not chat models, they are "only" generation models.
+dies-ok { Chatnik::evaluate-message($msg, %chats, chat-id => 'img2', name => 'ollama', model => 'x/z-image-turbo:bf16') };
+
+## 3
+dies-ok { Chatnik::evaluate-message($msg, %chats, chat-id => 'img3', model => 'ollama::x/z-image-turbo:bf16') };
+
+done-testing;
