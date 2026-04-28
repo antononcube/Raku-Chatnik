@@ -109,7 +109,7 @@ llm-chat-meta --help
 List all chat objects ("chats" and "personas" are synonyms to "list"):
 
 ```shell
-llm-chat-meta list
+llm-chat-meta list --format=json
 ```
 
 Here we see the messages of "yoda1":
@@ -134,7 +134,7 @@ For example, `chatnik meta clear -i yoda1` can be used instead of the previous c
 ### Asking for a result in specific format
 
 ```shell
-llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Brazilian states? #NothingElse|JSON' 
+llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Brazilian states? #NothingElse|"JSON data frame"' 
 ```
 
 ### Make a request, echo, and place in clipboard  
@@ -246,6 +246,15 @@ the argument `--suffix` can be passed to `mktemp`. For example:
 
 ```
 tmpfile=$(mktemp --suffix=".md"); llm-chat-meta -i=th last-message > "$tmpfile"; open "$tmpfile"
+```
+
+### Tabulate the LLM personas summary
+
+If the text browser [`w3m`](https://w3m.sourceforge.net) and the Raku package ["Data::Translators"](https://raku.land/zef:antononcube/Data::Translators) are installed,
+the following pipeline can be used to tabulate the summary the LLM personas:
+
+```shell
+llm-chat-meta list --format=json | data-translation | w3m -T text/html -dump -cols 120
 ```
 
 -----
@@ -475,6 +484,7 @@ because LLMs invocation is (much) slower in comparison.
     - [ ] TODO Recognizing the input is or has an image file path
     - [ ] TODO Handle output of image generation models 
     - [ ] TODO Use cases:
+      - [ ] TODO Image generation from a textual description
       - [ ] TODO Extract and translate textual content of an image
       - [ ] TODO Make another image from a given image
 - [ ] TODO Unit tests
@@ -494,6 +504,13 @@ because LLMs invocation is (much) slower in comparison.
 ----
 
 ## References
+
+## Articles, blog posts
+
+[AA1] Anton Antonov,
+["Chatnik: LLM Host in the Shell — Part 1: First Examples & Design Principles"](https://rakuforprediction.wordpress.com/2026/04/25/chatnik-llm-host-in-the-shell-part-1-first-examples-design-principles/),
+(2026),
+[RakuForPrediction at WordPress](https://rakuforprediction.wordpress.com).
 
 ### Packages
 
