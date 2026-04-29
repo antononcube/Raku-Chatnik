@@ -16,6 +16,17 @@
         "Chatnik": "lib/Chatnik.rakumod"
     },
     "license": "Artistic-2.0",
+    "tags": [
+        "chat objects",
+        "chat",
+        "cli",
+        "large language model",
+        "large language models",
+        "llm chat",
+        "llm",
+        "persistence",
+        "persistent"
+    ],
     "api": "0",
     "source-url": "https://github.com/antononcube/Raku-Chatnik.git"
 }
