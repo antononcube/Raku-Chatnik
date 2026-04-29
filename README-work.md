@@ -223,7 +223,7 @@ mindmap
       GitHub
 ```
 
-### Render results Markdown with dedicated programs
+### Render Markdown results with dedicated programs
 
 Get feedback on a text with the prompt ["ThinkingHatsFeedback"](https://resources.wolframcloud.com/PromptRepository/resources/ThinkingHatsFeedback):
 
