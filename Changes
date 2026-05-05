@@ -1,5 +1,8 @@
 Revision history of the Raku package "Chatnik"
 
+0.0.7 2026-05-05
+    - Implemented the command "context" for llm-chat-meta.
+
 0.0.6 2026-04-29
     - Handling of env specified default model and LLM personas configuration file.
     - Warning when unknown configration options are specified.
