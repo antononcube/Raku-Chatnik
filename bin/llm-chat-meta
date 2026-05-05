@@ -101,7 +101,8 @@ multi sub MAIN(
         }
         when $_.lc ∈ <context prompt> && !$all {
             if %chats{$chat-id}:exists {
-                say Chatnik::to-chat-object(%chats{$chat-id}).llm-evaluator.context // "Emptu chat object context."
+                my $ctxt = Chatnik::to-chat-object(%chats{$chat-id}).llm-evaluator.context;
+                say ($ctxt ~~ Str:D && $ctxt.trim ?? $ctxt !! "Empty chat object context.")
             } else {
                 cannot-find($chat-id)
             }
