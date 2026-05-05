@@ -1,7 +1,7 @@
 {
     "name": "Chatnik",
     "description": "CLI scripts for conversing with persistent LLM personas.",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "raku": "6.d",
     "authors": [
         "Anton Antonov"
