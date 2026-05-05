@@ -31,7 +31,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Meta processing of persistent LLM-chat objects.
 multi sub MAIN(
-        Str:D $command,                    #= Command, one of: card, clear, delete, file, first-message, last-message, list, load-llm-personas, message, messages.
+        Str:D $command,                    #= Command, one of: card, clear, context, delete, file, first-message, last-message, list, load-llm-personas, message, messages.
         Str:D :i(:id(:$chat-id)) = 'NONE', #= Chat id; ignored if --all is specified.
         Bool:D :$all = False,              #= Whether to apply the command to all chat objects or not.
         *%args,                            #= Additional, optional arguments for the commands: clear, list, message, messages.
@@ -95,6 +95,13 @@ multi sub MAIN(
                 %chats{$chat-id}:delete;
                 spurt(Chatnik::get-chat-objects-file-name, to-json(%chats));
                 say "Deleted chat object $chat-id."
+            } else {
+                cannot-find($chat-id)
+            }
+        }
+        when $_.lc ∈ <context prompt> && !$all {
+            if %chats{$chat-id}:exists {
+                say Chatnik::to-chat-object(%chats{$chat-id}).llm-evaluator.context // "Emptu chat object context."
             } else {
                 cannot-find($chat-id)
             }
