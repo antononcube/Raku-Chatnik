@@ -99,7 +99,24 @@ multi sub MAIN(
                 cannot-find($chat-id)
             }
         }
-        when $_.lc ∈ <context prompt> && !$all {
+        when $_.lc ∈ <context prompt> && $all {
+            if %args<format> && %args<format>.Str.lc eq 'json' {
+                my @ds = do for %chats.kv -> $chat-id, %v {
+                    my $context = Chatnik::to-chat-object(%chats{$chat-id}).llm-evaluator.context;
+                    { :$chat-id, :$context}
+                }
+                say to-json(@ds)
+            } else {
+                for %chats.kv -> $chat-id, %v {
+                    my $ctxt = Chatnik::to-chat-object(%chats{$chat-id}).llm-evaluator.context;
+                    say '=' x 60;
+                    say "Chat ID: $chat-id";
+                    say '-' x 60;
+                    say ($ctxt ~~ Str:D && $ctxt.trim ?? $ctxt !! 'Empty chat object context.');
+                }
+            }
+        }
+        when $_.lc ∈ <context prompt> {
             if %chats{$chat-id}:exists {
                 my $ctxt = Chatnik::to-chat-object(%chats{$chat-id}).llm-evaluator.context;
                 say ($ctxt ~~ Str:D && $ctxt.trim ?? $ctxt !! "Empty chat object context.")
