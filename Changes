@@ -1,5 +1,9 @@
 Revision history of the Raku package "Chatnik"
 
+0.0.8 2026-05-06
+    - Implemented the "context" for llm-chat-meta --all.
+        - Printing plain text or JSON, if --format=JSON.
+
 0.0.7 2026-05-05
     - Implemented the command "context" for llm-chat-meta.
     - Reacting to chat-id name only specs, like:
