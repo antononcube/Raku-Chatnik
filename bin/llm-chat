@@ -2,10 +2,16 @@
 use v6.d;
 
 use Chatnik;
+use JSON::Fast;
 
 #-----------------------------------------------------------
 
 my %*SUB-MAIN-OPTS = :named-anywhere;
+
+sub is-known-chat-id(Str:D $word) {
+    my %chats = from-json(slurp(Chatnik::get-chat-objects-file-name));
+    return %chats{$word}:exists
+}
 
 #| Chat with persistent LLM-chat objects.
 multi sub MAIN(
@@ -35,12 +41,15 @@ multi sub MAIN(
         *@words,   #= Multi-word input.
         *%args     #= LLM configuration named arguments.
                ) {
-    MAIN(@words.join(' '), |%args)
+    if %args.elems == 0 && @words.elems > 1 && is-known-chat-id(@words.head) {
+        return MAIN(@words.tail(*-1), chat-id => @words.head)
+    }
+    return MAIN(@words.join(' '), |%args)
 }
 
 #| Using shell pipeline value as input.
 multi sub MAIN(
         *%args     #= LLM configuration named arguments.
                ) {
-    MAIN(lines().join("\n"), |%args)
+    return MAIN(lines().join("\n"), |%args)
 }
