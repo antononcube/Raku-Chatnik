@@ -10,7 +10,7 @@ sub get-n-range(%args, $elems) {
     my ($min, $max) = 0, $elems - 1;
     if (%args<n>:exists) && %args<n> ~~ Int:D {
         my $n = %args<n>;
-        if $n >= 0 { $max = $n - 1 } else { $min = $elems + $n}
+        if $n >= 0 { $max = $n - 1 } else { $min = max($elems + $n, 0)}
     }
     return {:$min, :$max};
 }
