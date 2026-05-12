@@ -249,6 +249,8 @@ llm-chat -i=beta --model=ollama::gemma3:12b 'What are the populations of the Bra
 
 ### Make a request, echo, and place in clipboard  
 
+This command works on MacOSX, the shells of which have the program `pbcopy`:
+
 ```
 llm-chat -i=unix '@CodeWriterX|Shell macOS list of files echo the result and copy to clipboard.' | tee /dev/tty | pbcopy
 ```
